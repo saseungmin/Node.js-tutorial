@@ -110,3 +110,124 @@ const secretCode = process.env.SECRET_CODE;
       console.log(error);
     })
   </pre>
+
+## ✒ 파일 시스템 접근하기
+
+### 🔶 비동기 
+- <code>readFile</code>은 Buffer 형식으로 출력되서 `toString()` 을 붙여서 사용한다.
+<pre>
+const fs = require('fs');
+fs.readFile('./readme.txt',(err,data) => {
+  if(err){
+    throw err;
+  }
+  console.log(data.toString());
+})
+</pre>
+- `writeFile()` 메서드에 생성될 파일의 경로와 내용을 입력해준다.
+<pre>
+fs.writeFile('./writeme.txt','글이 입력된다.',(err) => {
+  if(err){
+    throw err;
+  }
+})
+</pre>
+
+### 🔶 동기
+- `readFileSync('./readme.txt');` 메서드를 사용한다.
+- `writeFileSync()` 메서드를 사용한다.
+- 비동기 파일입출력 메서드를 순서대로(동기) 사용할려면 `readFile()`의 콜백에 다음 `readFile()`을 넣어준다.
+- 하지만 콜백 지옥이 나올수 있기 때문에 `Promise`나 `async/await`를 사용한다.
+
+### 🔶 버퍼와 스트림
+- 📌 버퍼 참고 문서 : https://nodejs.org/dist/latest-v12.x/docs/api/buffer.html
+- `const buffer = Buffer.from('버퍼 변경');` : 문자열을 버퍼로 바꿀 수 있다. length 속성은 버퍼의 크기를 나타낸다.
+- `buffer.toString()` : 버퍼를 문자열로 변경한다. 이때 base64나 hex를 인자로 넣으면 해당 인코딩으로 변환 가능하다.
+- `Buffer.concat(array)` : 배열 안에 든 버퍼들을 하나로 합친다.
+- `const buffer = Buffer.alloc(5)` : 빈 버퍼를 생성한다. 바이트를 인자로 지정해주면 해당 크기의 버퍼가 생성된다.
+> 버퍼는 100MB인 파일이 있으면 메모리에 100MB의 버퍼를 만들어야 한다. <br>때문에 버퍼의 크기를 작게 만들어서 여러 번에 나눠서 보내는 방식인 스트림이다.
+
+- 파일을 읽는 스트림 메서드로는 `createReadStream`이 있다.
+<pre>
+// 읽기 스트림 생성(첫 번째 인자: 파일 경로 / 두 번째 인자 : 옵션 객체로 highWaterMark는 버퍼의 크기를 정할 수 있는 옵션)
+const readStream = fs.createReadStream('./readme.txt',{highWaterMark : 16});
+const data = [];
+//읽기 시작
+readStream.on('data',(chunk) => {
+  data.push(chunk);
+  console.log('data : ',chunk, chunk.length);
+});
+// 종료
+readStream.on('end', () => {
+  console.log('end : ',Buffer.concat(data).toString());
+});
+// 에러
+readStream.on('error', (err) => {
+  console.log('error : ',err);
+})
+</pre>
+
+- 파일을 쓰는 스트림 메서드로는 `writeStream`이 있다.
+<pre>
+// 쓰기 스트림 생성 (첫번째 인자 : 출력 파일명)
+const writeStream = fs.createWriteStream('./writeme.txt');
+// 파일 쓰기가 종료되면 콜백 함수 호출
+writeStream.on('finish', () => {
+  console.log('파일 쓰기 완료');
+});
+
+writeStream.write('글쓰기');
+writeSrteam.write('글쓰기1');
+writeStream.end();
+</pre>
+
+- 스트림끼리 연결하는 `pipe` 메서드
+<pre>
+// pipe 시 자동으로 연결되어 데이터가 이동한다.
+const readStream = fs.createReadStream('readme.txt');
+const writeStream = fs.createWriteStream('write.txt');
+readStream.pipe(writeStream);
+</pre>
+
+#### 🌈 기타 fs 메서드
+- `fs.access(경로, 옵션, 콜백)` : 폴더나 파일에 접근할 수 있는지를 체크한다.
+<pre>
+// F_OK : 파일 존재 여부, R_OK : 읽기 권한 여부, W_OK : 쓰기 권한 여부
+// 파일/ 폴더가 없을 경우 에러 코드는 ENOENT
+fs.access('./folder', fs.constants.F_OK | fs.constants.R_OK | fs.constants.W_OK, (err) => {
+  if(err){
+    if(err.code === 'ENOENT'){
+      console.log('폴더 없음');
+    }
+  }
+})
+</pre>
+
+- `fs.mkdir('./folder',(err) => {})` : 폴더를 만드는 메서드
+- `fs.open('./folder/file.js','w',(err, fd) => {})` : 파일의 아이디(fd)를 가져오는 메서드로 두번째 인자는 w일때 쓰기, r일 경우 읽기, 기존 파일에 추가하려면 a 이다.
+- `fs.rename('./folder/file.js', './folder/new.js', (err) => {})` : 이름을 바꾸는 메서드
+- `fs.readdir('./folder',(err,dir) => {})` : 폴더 안의 내용물을 확인할 수 있다.
+- `fs.unlink('./folder/new.js',(err) => {})` : 파일을 지울 수 있다.
+- `fs.rmdir('./folder',(err) => {})` : 폴더를 삭제할 수 있다.
+- `fs.copy('readme1.txt','writeme1.txt', (error) => {})` : `pipe`를 사용하지 않고 파일을 복사할 수 있다.
+
+
+## ✒ 이벤트
+📌 이벤트 참고 문서 : https://nodejs.org/dist/latest-v12.x/docs/api/events.html
+<pre>
+const EventEmitter = require('events');
+const myEvent = new EventEmitter();
+</pre>
+
+- `myEvent.on('event', () => {})` : 이벤트 이름과 이벤트 발생 시 콜백을 연결(리스닝)해주고 하나의 이벤트에 여러 개를 달아줄 수 있다.
+- `myEvent.addListener('event', () => {})` : on과 같다.
+- `myEvent.emit('event')` : 이벤트를 호출하는 메서드이다.
+- `myEvent.once('event', () => {})` : 한 번만 실행되는 이벤트로 두번 on(호출)해도 콜백이 한 번만 실행된다.
+- `myEvent.removeAllListeners('event')` : 이벤트에 연결된 모든 이벤트 리스너를 제거한다.
+- `myEvent.removeListener('event',리스너)` : 이벤트에 연결된 리스너를 하나씩 제거한다.
+- `myEvent.off('event',콜백)` : 노드 10버전에 추가되고 `removeListener`와 기능이 같다.
+- `myEvent.listenerCount('event')` : 현재 리스너가 몇 개 연결되어 있는지 확인한다.
+
+## 참고 문서 
+- fs 프로미스 : https://nodejs.org/dist/latest-v12.x/docs/api/fs.html#fs_fspromises_access_path_mode
+- [uncaughtException](https://nodejs.org/dist/latest-v12.x/docs/api/process.html#process_event_uncaughtexception) : 노드 공식문서에서는 최후의 수단으로 사용하라고 한다. `uncaughtException` 이벤트 발생 후 다음 동작이 제대로 동작하는지를 보증하지 않는다.
