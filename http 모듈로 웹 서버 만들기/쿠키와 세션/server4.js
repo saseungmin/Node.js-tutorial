@@ -31,7 +31,7 @@ http
         Location: "/",
         "Set-Cookie": `name=${encodeURIComponent(
           name
-        )};Expires=${expires.toGMTString()}; HttpOnly; Path=/`,
+        )};Expires=${expires.toUTCString()}; HttpOnly; Path=/`,
       });
       res.end();
     } else if (cookies.name) {

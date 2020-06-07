@@ -57,7 +57,7 @@ session[randomInt] = {
 };
 res.writeHead(302, {
 Location: "/",
-"Set-Cookie": `session=${randomInt}; Expires=${expires.toGMTString()}; HttpOnly; Path=/`,
+"Set-Cookie": `session=${randomInt}; Expires=${expires.toUTCString()}; HttpOnly; Path=/`,
 });
 res.end();
 </pre>

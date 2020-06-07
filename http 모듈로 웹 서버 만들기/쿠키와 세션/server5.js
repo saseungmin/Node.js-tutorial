@@ -35,7 +35,7 @@ http
       };
       res.writeHead(302, {
         Location: "/",
-        "Set-Cookie": `session=${randomInt}; Expires=${expires.toGMTString()}; HttpOnly; Path=/`,
+        "Set-Cookie": `session=${randomInt}; Expires=${expires.toUTCString()}; HttpOnly; Path=/`,
       });
       res.end();
       // cookies.session이 있고 만료 기한을 넘기지 않았다면 session 변수에서 사용자 정보를 가져와서 사용한다.
