@@ -13,9 +13,9 @@ http.createServer((req, res) => {
     console.log('8080연결 대기');
 })
 </pre>
-> 📌 자세한 방법은 server1.js  참고
+> 📌 자세한 방법은 [server1.js](https://github.com/saseungmin/Node.js-tutorial/blob/master/http%20%EB%AA%A8%EB%93%88%EB%A1%9C%20%EC%9B%B9%20%EC%84%9C%EB%B2%84%20%EB%A7%8C%EB%93%A4%EA%B8%B0/%EC%9A%94%EC%B2%AD%EA%B3%BC%20%EC%9D%91%EB%8B%B5/server1.js)  참고
 - 파일을 읽어와서 html 파일을 전송하는 방법은 `fs.readFile()`을 사용해서 처리한다.
-> 📌 자세한 방법은 server2.js와 server2.html 참고
+> 📌 자세한 방법은 [server2.js](https://github.com/saseungmin/Node.js-tutorial/blob/master/http%20%EB%AA%A8%EB%93%88%EB%A1%9C%20%EC%9B%B9%20%EC%84%9C%EB%B2%84%20%EB%A7%8C%EB%93%A4%EA%B8%B0/%EC%9A%94%EC%B2%AD%EA%B3%BC%20%EC%9D%91%EB%8B%B5/server2.js)와 [server2.html](https://github.com/saseungmin/Node.js-tutorial/blob/master/http%20%EB%AA%A8%EB%93%88%EB%A1%9C%20%EC%9B%B9%20%EC%84%9C%EB%B2%84%20%EB%A7%8C%EB%93%A4%EA%B8%B0/%EC%9A%94%EC%B2%AD%EA%B3%BC%20%EC%9D%91%EB%8B%B5/server2.html) 참고
 <pre>
     fs.readFile('./server2.html', (err, data) => {
         if(err){
@@ -32,7 +32,7 @@ http.createServer((req, res) => {
 - 응답의 헤더에 쿠키를 기록해야 하므로 `res.writeHead` 메서드를 사용한다
 - `res.writeHead`의 첫 번째 인자는 상태 코드를 넣어주고 두 번째 인자에 헤더의 내용을 입력한다.(`"Set-Cookie": "myCookie=test"`)
 
-![쿠키](../img/1.PNG)
+![쿠키](./img/1.PNG)
 
 <hr>
 
@@ -45,8 +45,8 @@ http.createServer((req, res) => {
 > - Secure: HTTPS일 경우에만 쿠키가 전송된다.
 > - HttpOnly : 설정 시 자바스크립트에서 쿠키에 접근할 수 없다.
 
-- server4.js 에서의 방법은 쿠키가 노출되어 쿠키가 조작될 위험이 있다. => server5.js 수정
-> 📌 server5.js참고(세션 방법)
+- [server4.js](https://github.com/saseungmin/Node.js-tutorial/blob/master/http%20%EB%AA%A8%EB%93%88%EB%A1%9C%20%EC%9B%B9%20%EC%84%9C%EB%B2%84%20%EB%A7%8C%EB%93%A4%EA%B8%B0/%EC%BF%A0%ED%82%A4%EC%99%80%20%EC%84%B8%EC%85%98/server4.js) 에서의 방법은 쿠키가 노출되어 쿠키가 조작될 위험이 있다. => server5.js
+> 📌 [server5.js](https://github.com/saseungmin/Node.js-tutorial/blob/master/http%20%EB%AA%A8%EB%93%88%EB%A1%9C%20%EC%9B%B9%20%EC%84%9C%EB%B2%84%20%EB%A7%8C%EB%93%A4%EA%B8%B0/%EC%BF%A0%ED%82%A4%EC%99%80%20%EC%84%B8%EC%85%98/server5.js) 참고(세션 방법)
 <pre>
 // 임의의 숫자를 보낸다.
 // 사용자 이름과 만료시간은 session 객체에 담는다.
@@ -62,7 +62,7 @@ Location: "/",
 res.end();
 </pre>
 
-![session](../img/2.PNG)
+![session](./img/2.PNG)
 
 <hr>
 
