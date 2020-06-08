@@ -75,3 +75,109 @@ res.end();
 > - PUT : 서버의 자원을 요청에 들어 있는 자원으로 치환하고자 할 때 사용하는 것으로 요청의 본문(body)에 치환할 데이터를 넣어 보낸다.
 > - PATCH : 서버 자원의 일부만 수정하고자 할 때 사용하는 것으로 요청의 body에 일부 수정할 데이터를 넣어 보낸다.
 > - DELETE : 서버의 자원을 삭제하고자 할 때 사용한다.
+
+#### 🔶 Front js 부분
+> 📌 restFront.js
+<pre>
+function getUser() {
+  // 로딩 시 사용자가 가져오는 함수
+  var xhr = new XMLHttpRequest();
+  xhr.onload = function () {
+    if (xhr.status === 200) {
+      // 받은 users JSON
+      var users = JSON.parse(xhr.responseText);
+      // 생략..
+      // users 객체의 key로 map
+      Object.keys(users).map(function (key) {
+          //생략..
+      }
+    }
+  }
+}
+</pre>
+- 수정
+<pre>
+    xhr.open("PUT", "/users/" + key);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send(JSON.stringify({ name: name }));
+</pre>
+- 삭제
+<pre>
+    xhr.open("DELETE", "/users/" + key);
+    xhr.send();
+</pre>
+- getList
+<pre>
+  // 사용자 목록을 가져온다.
+  xhr.open("GET", "/users");
+  xhr.send();
+</pre>
+- 등록
+<pre>
+  xhr.open("POST", "/users");
+  xhr.setRequestHeader("Content-Type", "application/json");
+  xhr.send(JSON.stringify({ name: name }));
+</pre>
+
+#### 🔶 Server js 부분
+> 📌 restServer.js
+- getList
+<pre>
+if (req.method === "GET") {
+    // 생략..
+    else if (req.url === "/users") {
+        return res.end(JSON.stringify(users));
+    }
+}
+</pre>
+- 등록
+<pre>
+else if (req.method === "POST") {
+      if (req.url === "/users") {
+        let body = "";
+        req.on("data", (data) => {
+          // 받은 데이터들을 body에 넣는다.
+          body += data;
+        });
+        return req.on("end", () => {
+          const { name } = JSON.parse(body);
+          const id = Date.now();
+          users[id] = name;
+          // 201 Created 요청 성공, 자원 생성
+          res.writeHead(201);
+          res.end("등록 성공");
+        });
+      }
+}
+</pre>
+
+- 수정
+<pre>
+else if (req.method === "PUT") {
+      // startsWith() 메서드는 어떤 문자열이 특정 문자로 시작하는지 확인하여 결과를 true false로 반환한다.
+      if (req.url.startsWith("/users/")) {
+        // /기준으로 자른뒤 [2]번째 값 : key 값
+        const key = req.url.split("/")[2];
+        console.log("PUT key : ", key);
+        let body = "";
+        req.on("data", (data) => {
+          body += data;
+        });
+        return req.on("end", () => {
+          console.log("PUT body : ", body);
+          users[key] = JSON.parse(body).name;
+          return res.end(JSON.stringify(users));
+        });
+      }
+    }
+</pre>
+- 삭제
+<pre>
+else if (req.method === "DELETE") {
+      if (req.url.startsWith("/users/")) {
+        const key = req.url.split("/")[2];
+        delete users[key];
+        return res.end(JSON.stringify(users));
+      }
+    }
+</pre>
