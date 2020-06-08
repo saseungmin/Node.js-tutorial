@@ -77,7 +77,7 @@ res.end();
 > - DELETE : 서버의 자원을 삭제하고자 할 때 사용한다.
 
 #### 🔶 Front js 부분
-> 📌 restFront.js
+> 📌 [restFront.js](https://github.com/saseungmin/Node.js-tutorial/blob/master/http%20%EB%AA%A8%EB%93%88%EB%A1%9C%20%EC%9B%B9%20%EC%84%9C%EB%B2%84%20%EB%A7%8C%EB%93%A4%EA%B8%B0/REST%20API%EC%99%80%20%EB%9D%BC%EC%9A%B0%ED%8C%85/restFront.js)
 <pre>
 function getUser() {
   // 로딩 시 사용자가 가져오는 함수
@@ -120,7 +120,7 @@ function getUser() {
 </pre>
 
 #### 🔶 Server js 부분
-> 📌 restServer.js
+> 📌 [restServer.js](https://github.com/saseungmin/Node.js-tutorial/blob/master/http%20%EB%AA%A8%EB%93%88%EB%A1%9C%20%EC%9B%B9%20%EC%84%9C%EB%B2%84%20%EB%A7%8C%EB%93%A4%EA%B8%B0/REST%20API%EC%99%80%20%EB%9D%BC%EC%9A%B0%ED%8C%85/restServer.js)
 - getList
 <pre>
 if (req.method === "GET") {
