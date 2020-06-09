@@ -1,4 +1,10 @@
 # ✔️ http 모듈로 웹 서버 만들기
+### 📌 참고
+> - 쿠키 설명 : https://developer.mozilla.org/ko/docs/Web/HTTP/Cookies
+> - 세션 설명 : https://developer.mozilla.org/ko/docs/Web/HTTP/Session
+> - https 모듈 설명 : https://nodejs.org/dist/latest-v12.x/docs/api/https.html
+> - http2 모듈 설명 : https://nodejs.org/dist/latest-v12.x/docs/api/http2.html
+> - Cluster 모듈 설명 : https://nodejs.org/dist/latest-v12.x/docs/api/cluster.html
 ## ✒ 요청과 응답
 - 이벤트 리스너를 가진 노드 서버 만들기
 - req 객체는 요청에 관한 정보들과 res 객체는 응답에 관한 정보를 담는다.
@@ -181,3 +187,52 @@ else if (req.method === "DELETE") {
       }
     }
 </pre>
+
+## ✒ https와 http2
+#### 🔶https
+-  두 번째 인자는 http모듈과 같이 서버 로직이고, 첫번째 인자는 인증서에 관련된 욥션 객체이다.
+<pre>
+const https = require("https");
+https
+  .createServer(
+    {
+      cert: fs.readFileSync("도메인 인증서 경로"),
+      key: fs.readFileSync("도메인 비밀키 경로"),
+      ca: [
+        fs.readFileSync("상위 인증서 경로"),
+        fs.readFileSync("상위 인증서 경로"),
+      ],
+    },
+    (req, res) => {
+      //생략..
+    }
+  )
+  .listen(443, () => {
+    console.log("443포트 열림");
+  });
+</pre>
+#### 🔶http2
+- 최신 HTTP 프로토콜인 http/2를 사용할 수 있다.
+- 기존 방식보다 웹의 속도가 많이 개선됬다.
+<pre>
+const http2 = require("http2");
+// 동일
+</pre>
+
+## ✒ cluster
+- cluster 모듈은 싱글 스레드인 노드가 cpu 코어를 모두 사용할 수 있게 해주는 모듈이다.
+- 병렬로 실행된 서버의 개수만큼 요청이 분산되게 할 수 있다.
+- 성능이 개선되긴하지만 세션을 공유하지 못하는 등 단점이 존재.(Redis 등의 서버를 도입하여 해결)
+<pre>
+if (cluster.isMaster) {
+  console.log(`마스터 프로세스 아이디: ${process.pid}`);
+  // cpu 개수만큼 worker 생산
+  for (let i = 0; i < numCPUs; i += 1) {
+    cluster.fork();
+  }
+  // worker 종료
+  cluster.on("exit", (worker, code, signal) => {
+    console.log(`${worker.process.pid}번 worker 종료`);
+  });
+</pre>
+
