@@ -94,3 +94,43 @@ app.use(express.static(path.join(__dirname, 'public')));
 - 함수의 인자로 정적 파일들이 담겨 있는 폴더를 지정하면 된다. (public/stylesheets/style.css => `http://localhost:3000/stylesheets/style.css`)
 - static 미들웨어는 요청에 부합하는 정적 파일을 발견한 경우 응답으로 해당 파일을 전송한다.
 - 정적 파일 라우터 기능을 수행하므로 최대한 위쪽에 배치하는 것이 좋다. (morgan 다음 위치)
+
+### 🔶 [express-session](https://www.npmjs.com/package/express-session)
+- 세션 관리용 미들웨어로 로그인 등을 세션을 구현할 때 유용하다.
+- *express-generator*로는 설치되지 않아 직접 설치해야 한다.
+<pre>
+$ npm i express-session
+</pre>
+- 인자로 세션에 대한 설정을 받는다.
+- `resave`는 요청이 왔을 때 세션에 수정사항이 생기지 않더라도 세션을 다시 저장할지에 대한 설정이다.
+- `saveUninitialized`는 세션에 저장할 내역이 없더라도 세션에 저장할지에 대한 설정이다. (보통 방문자 추적)
+- `secret`은 필수 항목으로 `cookie-parser`의 비밀키와 같은 역할을 한다.
+<pre>
+app.use(cookieParser('secret code'));
+app.use(session({
+  resave: false,
+  saveUninitialized:false,
+  secret:'secret code',
+  cookie:{
+    httpOnly:true, // 클라이언트에서 쿠키를 확인하지 못한다.
+    secure:false, // https가 아닌 환경에서도 사용할 수 있다.
+  }
+}))
+</pre>
+- *express-session*은 세션 관리 시 클라이언트에 쿠키를 보낸다.
+- 안전하게 쿠키를 전송할려면 쿠키에 서명을 추가하고 쿠키를 서명하는 데 secret의 값이 필요하고 cookie-parser의 secret과 같게 설정해야 한다.
+- 쿠키의 `store` 옵션은 데이터베이스를 연결하여 세션을 유지하게 한다. (Redis)
+- *express-session*은 req.session 객체를 만들고 세션을 삭제할려면 req.session.destroy() 메서드를 호출한다.
+
+### 🔶 [connect-flash](https://www.npmjs.com/package/connect-flash)
+- 일회성 메시지들을 웹 브라우저에서 나타낼때 사용한다.
+<pre>
+$ npm i connect-flash
+</pre>
+- `cookie-parser`와 `express-session`을 사용하므로 뒤에 위치해야 한다.
+<pre>
+var flash = require("connect-flash");
+app.use(flash());
+</pre>
+- routers/users.js 참고
+- 처음 리다이렉트하면 flash 메시지는 보이지만 다시 새로고침하면 flash 메시지가 안보인다. (일회성)
