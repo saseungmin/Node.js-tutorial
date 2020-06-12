@@ -134,3 +134,60 @@ app.use(flash());
 </pre>
 - routers/users.js 참고
 - 처음 리다이렉트하면 flash 메시지는 보이지만 다시 새로고침하면 flash 메시지가 안보인다. (일회성)
+
+## ✒ Router 객체로 라우팅 분리
+- use 대신 get, post, put, patch, delete 같은 HTTP 메서드를 사용할 수 있다.
+- `app.use('/', function(req, res, next){});`
+- router 객체는 `express.Router()`로 만들어졌고 마지막에는 `module.exports = router`로 모듈을 만든다.
+- 라우터에서는 반드시 요청에 대한 응답을 보내거나 에러 핸들러로 요청을 넘겨야 한다.
+- next 함수에는 라우터에서만 동작하는 특수 기능인 `next('route')`로 라우터에 연결된 나머지 미들웨어들을 건너뛰고 싶을 때 사용한다.
+- 주소에 `:id`는 다른 값을 넣어서 사용할 수 있다. (`/users/1` , `/users/123`)
+<pre>
+// :id 면 req.params.id로 조회한다.
+router.get('/users/:id', function(req, res){
+  console.log(req.params, req.query);
+}
+</pre>
+- `/users/123?limit=5&skip=10` 이면 `req.params`와 `req.query`객체는 `{id : '123'} {limit : '5', skip : '10'}`
+- 단 주의할 점은 일반 라우터보다 뒤에 위치해야한다.
+- 에러가 발생하지 않으면 라우터는 요청을 보낸 클라이언트에게 응답을 보내주어야 한다.
+  - `send`는 버퍼 데이터나 문자열을 전송하거나, HTML 코드를 전송하고, JSON 데이터도 전송할 수 있다.
+  - `sendFile`은 파일을 응답으로 보내주는 메서드이다.
+  - `json`은  JSON 데이터를 보내준다.
+  - `redirect`는 응답을 다른 라우터로 보낸다.
+  - 기본적으로 200 HTTP 상태 코드와 res.redirect는 302 이지만 직접 바꿀 수 있다. 
+  - `render` 메서드는 템플린 엔진을 렌더링할 때 사용한다.
+- 요청을 처리할 수 있는 라우터가 없다면 다음 미들웨어로 넘어간다. (404 HTTP 상태 코드를 만들고 에러 처리 미들웨어로 넘긴다.)
+<pre>
+// 404 처리 미들웨어
+app.use(function (req, res, next) {
+  next(createError(404));
+});
+</pre>
+
+## ✒ 템플릿 엔진
+- 자바스크립트를 사용해서 HTML을 렌더링할 수 있게 해준다.
+- 대표적으로 [*Pug(Jade)*](https://pugjs.org/api/getting-started.html) 와  [*EJS*](https://ejs.co/)가 있다.
+<pre>
+// app.js
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "pug");
+</pre>
+- routes/index.js
+- `layout.pug`와 `index.pug`의 title 부분이 모드 `Express`로 치환된다.
+<pre>
+router.get('/', function(req, res, next) {
+  // 익스프레스가 res 객체에 추가한 템플릿 렌더링을 위한 메서드이다.
+  res.render('index', { title: 'Express' });
+});
+</pre>
+- *EJS*는 *Pug*의 HTML 문법 변화에 적응하기 힘들때 사용하는 템플릿 엔진으로 HTML 문법을 그대로 사용하되 추가로 자바스크립트 문법을 사용할 수 있다.
+- 자바의 JSP와 문법이 상당히 유사하다.
+<pre>
+// app.js
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "ejs");
+</pre>
+- `$ npm i ejs` *ejs* 패키지 설치
+- *EJS*는 *Pug*의 layout과 block은 지원하지 않는데 사용할려면 `express-ejs-layouts` 패키지를 설치해야한다.
+- 이외의 템플릿으로 *Nunjucks*, *Hogan*, *Dust*, *Twig*, *Vash* 등이 있다.
