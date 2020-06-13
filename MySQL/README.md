@@ -74,3 +74,5 @@ mysql> CREATE TABLE nodejs.comments(
     -> ENGINE=InnoDB;
 Query OK, 0 rows affected, 1 warning (0.03 sec)
 </pre>
+- 외래키는 `CONSTRAINT [제악조건명] FOREIGN KEY [컬럼명] REFERENCES [참고하는 컬러명]`이다.
+- `CASCADE`는 참조되는 외래키가 같이 삭제된다.
