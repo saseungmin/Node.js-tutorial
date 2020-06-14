@@ -76,3 +76,71 @@ Query OK, 0 rows affected, 1 warning (0.03 sec)
 </pre>
 - 외래키는 `CONSTRAINT [제악조건명] FOREIGN KEY [컬럼명] REFERENCES [참고하는 컬러명]`이다.
 - `CASCADE`는 참조되는 외래키가 같이 삭제된다.
+
+## ✒ 시퀄라이즈 사용하기
+- 노드에서 MySQL 데이터베이스에 접속한다.
+- MySQL 작업을 쉽게 할 수 있도록 도와주는 라이브러리가 *Sequelize*이다.
+- 시퀄라이즈는 ORM(Object-relational Mapping)으로 분류되는데 ORM은 자바스크립트 객체와 데이터베이스의 릴레이션을 매핑해주는 도구이다.
+- 시퀄라이즈는 자바스크립트 구문을 알아서 SQL로 바꿔줌으로써 SQL 언어를 직접 사용하지 않아도 자바스크립트만으로 MySQL을 조작할 수 있다.
+- 프로젝트를 설치하고 시퀄라이즈를 설치한다.
+<pre>
+$ express [프로젝트명] --view=pug
+// npm 패키지 설치
+$ npm i
+// sequelize와 mysql2 패키지를 설치한다.
+$ npm i sequelize mysql2
+// sequelize 커맨드를 사용하기 위해 sequelize-cli를 전역으로 설치한다.
+$ npm i -g sequelize-cli
+// 설치 완료 후 sequelize init 명령어 호출
+$ sequelize init
+</pre>
+- config, models, migrations, seeders 폴더 생성 확인.
+- models/index.js 수정
+
+### 📌 MySQL 연결하기
+- 시퀄라이즈를 통해 익스프레스 앱과 MySQL을 연결한다. (app.js 수정)
+<pre>
+...
+var indexRouter = require('./routes/index');
+var usersRouter = require('./routes/users');
+<b>var sequelize = require('./models').sequelize;</b>
+
+var app = express();
+// sync 메서드를 사용하면 서버 실행 시 알아서 MySQL과 연동된다.
+<b>sequelize.sync();</b>
+...
+</pre>
+
+### 📌 모델 정의하기
+- 테이블을 시퀄라이즈에서 정의한다.
+#### 🔸 models/user.js
+- `sequelize.define` 메서드는 테이블명과 각 칼럼의 스펙을 입럭하고 MySQL 테이블과 칼럼 내용이 일치해야 정확하게 대응된다.
+- 시퀄라이즈 자료형은 VARCHAR => STRING, INT => INTEGER, TINYINT => BOOLEAN, DATETIME => DATE 로 적는다.
+- `allowNull`은 `NOT NULL` 옵션과 동일하다.
+- `defaultValue`는 기본값을 의미한다.
+- `sequelize.define`의 세 번째 인자는 테이블 옵션으로 `timestamps` 속성이 true이면 시퀄라이즈는 `createdAt`과 `updatedAt` 컬럼을 추가한다.
+- 로우가 생성될 떄와 수정될 떄의 시간이 자동으로 입력된다.
+- 시퀄라이즈 자체에서 관계를 따로 정의할 수 있다.
+#### 🔸 models/index.js
+- models/index.js와 연결한다.
+<pre>
+...
+db.User = require("./user")(sequelize, Sequelize);
+db.Comment = require("./comment")(sequelize, Sequelize);
+...
+</pre>
+
+#### 🔸 config/config.json 수정
+- `operatorsAliases`는 보안에 취약한 연산자를 사용할지 여부를 설정하는 옵션이다.
+- 이 설정은 `process.env.NODE_ENV`가 `development`일 떄 적용된다.
+- 나중에 배포할 때는 `production`으로 설정하고, 배포 환경을 위해 데이터베이스 설정할 때는 `production`속성을 수정해준다.
+<pre>
+  "development": {
+    "username": "root",
+    <b>"password": "[비밀번호]",</b>
+    <b>"database": "nodejs",</b>
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "operatorsAliases": false
+  },
+</pre>
