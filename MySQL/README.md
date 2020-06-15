@@ -144,3 +144,123 @@ db.Comment = require("./comment")(sequelize, Sequelize);
     "operatorsAliases": false
   },
 </pre>
+
+
+### 📌 관계 정의하기
+#### 🔸 1:N 관계
+- 시퀄라이즈에서는  1:N 관계를 `hasMany`라는 메서드로 표현한다.
+- 예를 들어 users 테이블의 로우 하나를 불러올 때 연결된 comments 테이블의 로우들도 같이 불러올 수 있다.
+- 반대로 `belongsTo` 메서드는 comments에서 users테이블의 로우를 가져온다.
+- model/index.js에 추가한다.
+<pre>
+db.User.hasMany(db.Comment, {foreignKey : 'commenter', sourceKey : 'id'});
+db.Comment.belongsTo(db.User, {foreignKey : 'commenter', targetKey : 'id'});
+</pre>
+- `npm start`를 하면 서버를 시작하고 콘솔에 시퀄라이즈가 스스로 SQL문을 실행한다.
+
+![img](./img/28.PNG)
+
+#### 🔸 1:1 관계
+- 1:1 관계에서는 `hasOne` 메서드를 사용한다.
+- `belongsTo` 와 `hasOne`이랑 변경되도 상관없다.
+<pre>
+db.User.hasOne(db.Comment, {foreignKey : 'commenter', sourceKey : 'id'});
+db.Info.belongsTo(db.User, {foreignKey : 'commenter', targetKey : 'id'});
+</pre>
+
+#### 🔸 N:M 관계
+- N:M 관계는 `belongsToMany` 메서드를 사용한다.
+<pre>
+db.Post.belongsToMany(db.Comment, {through: 'PostHashtag'});
+db.Hashtag.belongsToMany(db.User, {through: 'PostHashtag'});
+</pre>
+- N:M 관계는 새로운 모델이 생성되고 through 속성에 그 이름을 적어준다.
+- N:M 관계 조회를 편하게 할 수 있도록 아래 메서드를 지원한다.
+<pre>
+// async/await 방식
+async(req, res, next) => {
+  const tag = await Hashtag.findOne({where : {title: '노드'}});
+  const posts = await tag.getPosts();
+}
+
+// 프로미스 방식
+Hashtag.findOne({where : {title : '노드'}})
+  .then(tag => tag.getPosts())
+  .then(posts => console.log(posts));
+
+// N:M 관계 추가
+async(req, res, next) => {
+  const tag = await Hashtag.findOne({where : {title: '노드'}});
+  await tag.addPosts(3)
+}
+</pre>
+
+### 📌 쿼리 설정하기
+#### 🔸 INSERT INTO
+- `create`메서드를 사용한다.
+- MySQL 자료형이 아니라 시퀄라이즈 모델에 정의한 자료형대로 넣어야한다. (married : false)
+<pre>
+const {User} = require('../models')
+User.create({
+  name: 'sa',
+  age: 26,
+  married: false,
+  comment:'승민',
+});
+</pre>
+#### 🔸 SELECT FROM
+- `SELECT * FROM users;`
+<pre>
+User.findAll({});
+</pre>
+- `SELECT * FROM users LIMIT 1;`
+<pre>
+User.findOne({});
+</pre>
+- `SELECT name,age  FROM users;`
+- `attributes` 속성으로 원하는 컬럼만 가져올 수 있다.
+- `order` 속성으로 정렬을 수행할 수 있는데 주의 사항은 배열안에 배열로 이루어져있다. (두개 이상의 칼럼이 가능하기 때문에) 
+- `limit` 속성은 `findOne`을 해도되지만 `findeAll`을 하고 `limit`로 설정할 수 있다.
+- `offset` 설정도 가능하다.
+<pre>
+User.findAll({
+  attributes:['name','age'],
+  order:[['age','DESC']],
+  limit: 1,
+  offset : 1,
+})
+</pre>
+
+- `SELECT name,age  FROM users WHERE married = 1 AND age > 30;`
+- `where`에 `age`부분은 시퀄라이즈는 자바스크립트 객체를 사용해서 쿼리를 생성해야 하므로 `0p.gt` 같은 특수한 연산자들이 사용된다.
+- ES2015 문법으로 `0p.gt`(초과), `0p.gte`(이상), `0p.lt`(미만), `0p.lte`(이하), `0p.ne`(같지 않음), `0p.or`(또는), `0p.in`(배열 요소 중 하나), `0p.notIn`(배열 요소와 모두 다름) 등이 있다.
+<pre>
+const {User, Sequelize:{0p}} = require('../models');
+User.findAll({
+  attributes:['name','age'],
+  where : {
+    married : 1,
+    age : {[0p.gt] : 30},
+  }
+})
+</pre>
+
+#### 🔸 UPDATE SET
+<pre>
+User.update({
+  comment: '내용 수정',
+},{
+  where:{id:2},
+})
+</pre>
+
+#### 🔸 DELETE FROM
+<pre>
+User.destory({
+  where:{id : 2},
+});
+</pre>
+
+
+
+
