@@ -261,6 +261,13 @@ User.destory({
 });
 </pre>
 
+### 📌 쿼리 수행(CRUD)
+- 소스코드 참고
+
+
+## ✒ 참고 자료
+- MySQL 메뉴얼 : https://dev.mysql.com/doc/refman/8.0/en/
+- 시퀄라이즈 문서 : https://sequelize.org/v5/
 
 
 
