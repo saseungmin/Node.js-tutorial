@@ -1,5 +1,6 @@
 # ✔ Mongo DB
-
+> - 📌 몽고디비 설치 : https://www.mongodb.com/try/download/community
+> - 📌 몽고디비 메뉴얼 : https://docs.mongodb.com/manual/
 ## ✒ 데이터베이스 및 컬렉션 생성
 - 몽고디비 프롬프트에 접속
 <pre>
