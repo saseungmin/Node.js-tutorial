@@ -135,3 +135,9 @@ WriteResult({ "nRemoved" : 1 })
 <pre>$ npm i</pre>
 - *mongoose* 설치
 <pre>$ npm i mongoose</pre>
+
+### 🔸 몽고디비 연결하기
+- 노드와 몽고디비를 몽구스를 통해 연결한다.
+- 몽고디비는 주소를 사용해 연결한다. `주소 형식 : mongodb://[username:password@]host[:port][[/database][?options]]`
+  - `[]` 부분은 있어도 되고 없어도 된다.
+- `schemas/index.js` 참고
