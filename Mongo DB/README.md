@@ -141,3 +141,6 @@ WriteResult({ "nRemoved" : 1 })
 - 몽고디비는 주소를 사용해 연결한다. `주소 형식 : mongodb://[username:password@]host[:port][[/database][?options]]`
   - `[]` 부분은 있어도 되고 없어도 된다.
 - `schemas/index.js` 참고
+
+### 🔸 몽구스 쿼리수행
+- 소스 코드 참고

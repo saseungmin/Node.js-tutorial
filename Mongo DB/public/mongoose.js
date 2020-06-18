@@ -18,10 +18,10 @@ function getUser() {
       users.map(function (user) {
         var row = document.createElement('tr');
         row.addEventListener('click', function () {
-          getComment(user.id);
+          getComment(user._id);
         });
         var td = document.createElement('td');
-        td.textContent = user.id;
+        td.textContent = user._id;
         row.appendChild(td);
         td = document.createElement('td');
         td.textContent = user.name;
@@ -53,10 +53,10 @@ function getComment(id) {
       comments.map(function (comment) {
         var row = document.createElement('tr');
         var td = document.createElement('td');
-        td.textContent = comment.id;
+        td.textContent = comment._id;
         row.appendChild(td);
         td = document.createElement('td');
-        td.textContent = comment.user.name;
+        td.textContent = comment.commenter.name;
         row.appendChild(td);
         td = document.createElement('td');
         td.textContent = comment.comment;
@@ -78,7 +78,7 @@ function getComment(id) {
               console.error(xhr.responseText);
             }
           };
-          xhr.open('PATCH', '/comments/' + comment.id);
+          xhr.open('PATCH', '/comments/' + comment._id);
           xhr.setRequestHeader('Content-Type', 'application/json');
           xhr.send(JSON.stringify({ comment: newComment }));
         });
@@ -96,7 +96,7 @@ function getComment(id) {
               console.error(xhr.responseText);
             }
           };
-          xhr.open('DELETE', '/comments/' + comment.id);
+          xhr.open('DELETE', '/comments/' + comment._id);
           xhr.send();
         });
         td = document.createElement('td');

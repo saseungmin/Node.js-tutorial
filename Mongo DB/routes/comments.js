@@ -6,7 +6,7 @@ router.get('/:id', function (req, res, next) {
   // populate 메서드로 관련 있는 컬렉션의 다큐먼트를 불러올 수 있다.
   // commenter 필드가 사용자 다큐먼트로 치환된다.
   // commenter 필드는 objectId가 아니라 그 objectId를 가진 사용자의 다큐먼트가 된다.
-  Comment.find({ commenter: req.body.id })
+  Comment.find({ commenter: req.params.id })
     .populate('commenter')
     .then((comments) => {
       console.log(comments);
@@ -42,7 +42,7 @@ router.post('/', function (req, res, next) {
 // 수정
 router.patch('/:id', function (req, res, next) {
   // 시퀄라이즈와 반대로 첫번째 인자에 id 두번째인자에 바꿀 내용
-  Comment.update({ _id: req.body.id }, { comment: req.body.comment })
+  Comment.update({ _id: req.params.id }, { comment: req.body.comment })
     .then((result) => {
       res.json(result);
     })
@@ -54,7 +54,7 @@ router.patch('/:id', function (req, res, next) {
 
 // 삭제
 router.delete('/:id', function (req, res, next) {
-  Comment.remove({ _id: req.body.id })
+  Comment.remove({ _id: req.params.id })
     .then((result) => {
       res.json(result);
     })
