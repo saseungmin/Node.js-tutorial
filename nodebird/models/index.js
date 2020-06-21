@@ -21,7 +21,7 @@ db.Post.belongsTo(db.User);
 // Post와 Hashtag의 관계는 N:M
 // 헤시태그 하나에 여러개의 게시글을 가질 수 있고, 게시글 하나에 헤시태그 여러개를 가질 수 있다.
 // N:M관계는 중간에 관계 테이블이 생성된다.
-// 시퀄라이즈가 관계를 분석하여 PostHashtag테이블을 자옫 생성한다.
+// 시퀄라이즈가 관계를 분석하여 PostHashtag테이블을 자동 생성한다.
 // 컬럼명은 postId와 hashtagId 이다.
 db.Post.belongsToMany(db.Hashtag, { through: 'PostHashtag' });
 db.Hashtag.belongsToMany(db.Post, { through: 'PostHashtag' });

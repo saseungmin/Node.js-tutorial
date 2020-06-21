@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(100),
         allowNull: true,
       },
-      // provider가 local이면 로컬 로그인을 한 것이고, kakao면 카카카오 로그인을 한 것이다.
+      // provider가 local이면 로컬 로그인을 한 것이고, kakao면 카카오 로그인을 한 것이다.
       provider: {
         type: DataTypes.STRING(10),
         allowNull: false,
@@ -31,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       //테이블을 생성한 후 자동적으로 createdAt, updatedAt column을 생성
       timestamps: true,
-      //aranoid가 true이면 deletedAt column이 table에 추가된다.
+      //paranoid가 true이면 deletedAt column이 table에 추가된다.
       //해당 row를 삭제시 실제로 데이터가 삭제되지 않고 deletedAt에 삭제된 날짜가 추가되며 deletedAt에 날짜가 표기된 row는 find작업시 제외된다.
       paranoid: true,
     },
