@@ -10,3 +10,6 @@
 ### ✒ [4. express-web-server](https://github.com/saseungmin/Node.js-tutorial/tree/master/Express%20web%20Server)
 ### ✒ [5. MySQL](https://github.com/saseungmin/Node.js-tutorial/tree/master/MySQL)
 ### ✒ [6. MongoDB](https://github.com/saseungmin/Node.js-tutorial/tree/master/Mongo%20DB)
+### ✒ [7. express SNS Service 만들기](https://github.com/saseungmin/Node.js-tutorial/tree/master/nodebird)
+- MySQL (sequelize)
+- Passport 모듈로 로그인 구현 (local, kakao)

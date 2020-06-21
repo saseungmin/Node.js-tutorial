@@ -140,7 +140,7 @@ module.exports = (passport) => {
 };
 </pre>
 - 즉, `serializeUser`는 사용자 정보 객체를 세션에 아이디로 저장하는 것이고, `deserializeUser`는 세션에 저장한 아이디를 통해 사용자 정보 객체를 불러오는 것이다.
-### 📌 passport 전체 과정
+#### 📌 passport 전체 과정
 > 1. 로그인 요청이 들어옴
 > 2. `passport.authenticate` 메서드 호출
 > 3. 로그인 전략 수행
@@ -169,4 +169,80 @@ router.get('/profile', isLoggedIn, (req, res) => {
 router.get('/join', isNotLoggedIn, (req, res) => {
   res.render('join', { title: '회원가입 - NodeBird', user: req.user, joinError: req.flash('joinError') });
 });
+</pre>
+#### 🔸 회원가입, 로그인, 로그아웃 라우터 생성(routes/auth.js 참고)
+- 로그인 라우터로 `passport.authenticate('local')` 미들웨어가 로컬 로그인 전략을 수행한다.
+- 콜백 함수의 첫번째인자(authError)가 존재하면 실패, 두번째 인자가 존재하면 성공
+- 성공하면 `req.login` 메서드를 호출하고 `req.login`는 `passport.serializeUser` 를 호출한 뒤, `req.login`에 제공하는 `user`객체가 `serializeUser`로 넘어가게 된다. 
+<pre>
+router.post('/login', isNotLoggedIn, (req, res, next) => {
+  passport.authenticate('local', (authError, user, info) => {
+    //.... 생략
+    return req.login(user, (loginError) => {
+      if (loginError) {
+        return next(loginError);
+      }
+      return res.redirect('/');
+    });
+  })(req, res, next); // 미들웨어 내의 미들웨어는 (req,res,next)를 붙인다.
+})
+</pre>
+#### 🔸 local 로그인 전략(Strategy) 구성(passport/localStrategy.js)
+- `const LocalStrategy = require('passport-local').Strategy;` : `passport-local` 모듈에서 `Strategy` 생성자를 불러와 사용한다.
+- 첫번째인자로 주어진 객체는 전략(Strategy)에 관한 설정을 하는 곳이다.
+- `usernameField`와 `passwordField`에 일치하는 `req.body`의 속성명에 해당한다.
+<pre>
+module.exports = (passport) => {
+  passport.use(new LocalStrategy())(
+    {
+      usernameField: 'email',
+      passwordField: 'password',
+    },
+    // 생략...
+}
+</pre>
+- 두 번째 인자로 실제 전략을 수행하는 `async` 함수이다.
+- 첫 번쨰 인자에서 넣어준 email과 password는 `async`의 첫 번쨰, 두 번째 매개변수가 된다.
+- 세 번째 매개변수인 `done`함수는 `passport.authenticate`의 콜백 함수이다.
+<pre>
+module.exports = (passport) => {
+    // 생략...
+    ,async (email, password, done) => {
+      try {
+        const exUser = await User.findOne({ where: { email } });
+        if (exUser) {
+          const result = await bcrypt.compare(password, exUser.password);
+          if (result) {
+            done(null, exUser);
+          } else {
+            done(null, false, { message: '비밀번호가 일치하지 않습니다.' });
+          }
+        } else {
+          done(null, false, { message: '가입되지 않은 회원입니다.' });
+        }
+      } catch (error) {
+        console.error(error);
+        done(error);
+      }
+    }
+}
+</pre>
+
+#### ✨ done과 authenticate의 관계
+- `done(null, false, { message: 'error' });` => `passport.authenticate('..',(authError, user, info))`
+- `done`이 호출된 후에는 다시 `passport.authenticate`의 콜백 함수에서 나머지 로직이 실행된다.
+> 1. 로그인 성공 시
+<pre>
+                          done(null, exUser);
+passport.authenticate('local',(authError, user, info) => {})
+</pre>
+> 2. 로그인 실패 시
+<pre>
+                          done(null, false, { message: '비밀번호가 일치하지 않습니다.' });
+passport.authenticate('local',(authError, user, info) => {})
+</pre>
+> 3. 서버 에러 시
+<pre>
+                            done(error);
+passport.authenticate('local',(authError, user, info) => {})
 </pre>
