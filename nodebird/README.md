@@ -105,7 +105,8 @@ Executing (default): CREATE TABLE IF NOT EXISTS `hashtags` (`id` INTEGER NOT NUL
 
 ##  🌈 Passport 모듈로 로그인 구현하기
 <pre>
-$ npm i passport passport-local passport-kakao bcrpyt
+$ npm i passport passport-local passport-kakao
+$ npm install bcrypt --save
 </pre>
 - `Passport`모듈을 app.js 와 연결
 - `req.session`객체는 `express-session`에서 생성하는 것이므로 `passport` 미들웨어는 `express-session` 미들웨어보다 뒤에 연결해야 된다.
@@ -193,12 +194,13 @@ router.post('/login', isNotLoggedIn, (req, res, next) => {
 - `usernameField`와 `passwordField`에 일치하는 `req.body`의 속성명에 해당한다.
 <pre>
 module.exports = (passport) => {
-  passport.use(new LocalStrategy())(
+  passport.use(new LocalStrategy(
     {
       usernameField: 'email',
       passwordField: 'password',
     },
     // 생략...
+  ));
 }
 </pre>
 - 두 번째 인자로 실제 전략을 수행하는 `async` 함수이다.
@@ -246,3 +248,53 @@ passport.authenticate('local',(authError, user, info) => {})
                             done(error);
 passport.authenticate('local',(authError, user, info) => {})
 </pre>
+
+### ✨ 카카오 로그인 구현하기
+#### 📌 카카오 passport 참고 문서 : http://www.passportjs.org/packages/passport-kakao/
+- `passport/kakaoStrategy.js` 참고 (`localStrategy`와 유사)
+- `routes/auth.js`에 카카오 로그인 라우터 생성
+- 카카오 로그인 창으로 리다이렉트하고 결과를 `GET /auth/kakao/callback` 으로 받는다.
+- 카카오 로그인은 내부적으로 `req.login`을 호출하므로 `passport.authenticate` 메서드에 콜백 함수를 제공하지 않는다. 
+<pre>
+// 카카오 로그인 과졍 (/auth/kakao)
+router.get('/kakao', passport.authenticate('kakao'));
+
+// 카카오 로그인 전략 수행
+router.get(
+  '/kakao/callback',
+  passport.authenticate('kakao', {
+    // 로그인 실패했을 떄 이동
+    failureRedirect: '/',
+  }),
+  (req, res) => {
+    // 성공 시 이동
+    res.redirect('/');
+  },
+);
+</pre>
+- `app.js`에 `auth.js` 연결
+- https://developers.kakao.com/ 에 접속 후 회원가입
+- 앱 생성 참고 (https://developers.kakao.com/docs/latest/ko/getting-started/app)
+- 생성 후 REST API 키를 `.env`에 등록
+<pre>
+COOKIE_SECRET=[쿠키 키]
+KAKAO_ID=[REST API 키]
+</pre>
+- 내 애플리케이션 > 앱 설정 > 플랫폼 > Web에 사이트 도메인 추가
+
+![domain](./img/2.PNG)
+
+- 내 애플리케이션 > 제품설정 > 카카오 로그인 > Redirect URI에 `/auth/kakao/callback` 입력후 저장 (`kakaoStrategy.js`의 `callbackURL`과 일치해야 한다.)
+
+![Redirect](./img/3.PNG)
+- 카카오 로그인 API 사용 활성화
+
+![활성화](./img/4.PNG)
+
+- 내 애플리케이션 > 제품설정 > 카카오 로그인 > 동의항목에 프로필 정보, 카카오계정(이메일) 수집 설정
+
+![수집설정](./img/5.PNG)
+
+### 📌 그 외에 Passport : [구글](http://www.passportjs.org/packages/passport-google-oauth2/), [페이스북](http://www.passportjs.org/packages/passport-facebook/), [네이버](http://www.passportjs.org/packages/passport-naver/), [트위터](http://www.passportjs.org/packages/passport-twitter/), [github](http://www.passportjs.org/packages/passport-github/)
+
+<hr>
