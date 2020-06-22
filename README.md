@@ -13,3 +13,4 @@
 ### ✒ [7. express SNS Service 만들기](https://github.com/saseungmin/Node.js-tutorial/tree/master/nodebird)
 - MySQL (sequelize)
 - Passport 모듈로 로그인 구현 (local, kakao)
+- Multer 모듈로 이미지 업로드 하기

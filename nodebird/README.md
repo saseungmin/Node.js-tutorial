@@ -298,3 +298,10 @@ KAKAO_ID=[REST API 키]
 ### 📌 그 외에 Passport : [구글](http://www.passportjs.org/packages/passport-google-oauth2/), [페이스북](http://www.passportjs.org/packages/passport-facebook/), [네이버](http://www.passportjs.org/packages/passport-naver/), [트위터](http://www.passportjs.org/packages/passport-twitter/), [github](http://www.passportjs.org/packages/passport-github/)
 
 <hr>
+
+##  🌈 Multer 모듈로 이미지 업로드 하기
+- `form` 인코딩 타입은 `multipart/form-data` 이다.
+- 이런 형태는 직접 처리하기 힘드므로 편하게 해주는 `multipart` 처리용 모듈인  `Multer`를 사용한다.
+<pre>
+$ npm i multer
+</pre>
