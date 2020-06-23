@@ -10,6 +10,9 @@ require('dotenv').config();
 
 const pageRouter = require('./routes/page');
 const authRouter = require('./routes/auth');
+const postRouter = require('./routes/post');
+const userRouter = require('./routes/user');
+
 // 모델을 서버와 연결
 const { sequelize } = require('./models');
 // passpoart 모듈 연결
@@ -25,6 +28,9 @@ app.set('port', process.env.PORT || 8002);
 
 app.use(morgan('dev'));
 app.use(express.static(path.join(__dirname, 'public')));
+// 업로드한 이미지를 제공할 라우터
+app.use('/img', express.static(path.join(__dirname, 'uploads')));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 // dotenv를 사용해서 쿠키 비밀키 사용
@@ -49,6 +55,8 @@ app.use(passport.session());
 
 app.use('/', pageRouter);
 app.use('/auth', authRouter);
+app.use('/post', postRouter);
+app.use('/user', userRouter);
 
 // 404 미들웨어
 app.use((req, res, next) => {

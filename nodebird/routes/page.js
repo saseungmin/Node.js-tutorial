@@ -30,7 +30,7 @@ router.get('/', (req, res, next) => {
       // 일부 특성만을 select
       attributes: ['id', 'nick'],
     },
-    order: [['createAt', 'DESC']],
+    order: [['createdAt', 'DESC']],
   })
     .then((posts) => {
       res.render('main', {

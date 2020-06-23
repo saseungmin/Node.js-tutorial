@@ -64,6 +64,7 @@ block content
               xhr.onload = function () {
                 if (xhr.status === 200) {
                   location.reload();
+                  alert('팔로잉되셨습니다.');
                 } else {
                   console.error(xhr.responseText);
                 }

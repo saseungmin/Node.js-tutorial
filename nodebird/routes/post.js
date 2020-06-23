@@ -23,7 +23,7 @@ const upload = multer({
   storage: multer.diskStorage({
     // destination 저장경로를 nodebird 폴더 아래 uploads 폴더로 지정한다.
     destination(req, file, cb) {
-      cb(null, 'upload/');
+      cb(null, 'uploads/');
     },
     // 파일이름 설정
     filename(req, file, cb) {
@@ -69,6 +69,30 @@ router.post('/', isLoggedIn, upload2.none(), async (req, res, next) => {
   } catch (error) {
     console.error(error);
     next(error);
+  }
+});
+
+// 해시태그 조회
+router.get('/hashtag', async (req, res, next) => {
+  const query = req.query.hashtag;
+  if (!query) {
+    return res.redirect('/');
+  }
+  try {
+    // 일치하는 해시태그 찾기
+    const hashtag = await Hashtag.findOne({ where: { title: query } });
+    let posts = [];
+    if (hashtag) {
+      posts = await hashtag.getPosts({ include: [{ model: User }] });
+    }
+    return res.render('main', {
+      title: `${query} | NodeBird`,
+      user: req.user,
+      twits: posts,
+    });
+  } catch (error) {
+    console.error(error);
+    return next(error);
   }
 });
 
