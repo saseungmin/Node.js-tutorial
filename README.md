@@ -14,3 +14,4 @@
 - MySQL (sequelize)
 - Passport 모듈로 로그인 구현 (local, kakao)
 - Multer 모듈로 이미지 업로드 하기
+- 해시태그/ 팔로우 기능
