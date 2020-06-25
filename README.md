@@ -16,3 +16,4 @@
 - Multer 모듈로 이미지 업로드 하기
 - 해시태그/ 팔로우 기능
 ### ✒ [8. Web API Server 만들기](https://github.com/saseungmin/Node.js-tutorial/tree/master/nodebird-api)
+- JWT 토큰 인증
