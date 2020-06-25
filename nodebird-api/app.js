@@ -15,6 +15,7 @@ const passportConfig = require('./passport');
 
 const authRouter = require('./routes/auth');
 const indexRouter = require('./routes');
+const v1 = require('./routes/v1');
 
 const app = express();
 sequelize.sync();
@@ -48,6 +49,7 @@ app.use(passport.initialize());
 // req.session 객체에 passport 정보를 저장한다.
 app.use(passport.session());
 
+app.use('/v1', v1);
 app.use('/', indexRouter);
 app.use('/auth', authRouter);
 

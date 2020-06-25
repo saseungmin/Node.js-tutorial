@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  sequelize.define(
+  return sequelize.define(
     'domain',
     {
       // 인터넷 주소
