@@ -35,6 +35,7 @@
 <hr>
 
 ## 🌈 JWT 토큰 인증
+> 참고 링크 : https://jwt.io/introduction/
 - JWT(*JSON Web Token*)은 JSON 형식의 데이터를 저장하는 토큰이다.
 - JWT는 세 부분으로 구성된다.
 > - 헤더 : 토큰 종류와 해시 알고리즘 정보가 들어있다.
@@ -86,3 +87,5 @@ router.get('/test', verifyToken, (req, res) => {
 const v1 = require('./routes/v1');
 app.use('/v1', v1);
 </pre>
+
+## 🌈API 호출 서버
