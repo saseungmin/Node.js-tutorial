@@ -17,3 +17,4 @@
 - 해시태그/ 팔로우 기능
 ### ✒ [8. Web API Server 만들기](https://github.com/saseungmin/Node.js-tutorial/tree/master/nodebird-api)
 - JWT 토큰 인증
+- axios 패키지 사용하여 서버 요청 (https://github.com/saseungmin/Node.js-tutorial/tree/master/nodebird-call)
