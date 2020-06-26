@@ -11,7 +11,7 @@ const app = express();
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
-app.set('port', process.env.PORT || 8001);
+app.set('port', process.env.PORT || 8003);
 
 app.use(morgan('dev'));
 // dotenv를 사용해서 쿠키 비밀키 사용

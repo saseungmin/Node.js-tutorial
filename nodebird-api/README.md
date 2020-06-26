@@ -87,5 +87,3 @@ router.get('/test', verifyToken, (req, res) => {
 const v1 = require('./routes/v1');
 app.use('/v1', v1);
 </pre>
-
-## 🌈API 호출 서버
