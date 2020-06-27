@@ -1,11 +1,24 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
+const cors = require('cors');
+const url = require('url');
 
 const { verifyToken, apiLimiter } = require('./middlewares');
 const { Domain, Hashtag, Post, User } = require('../models');
 
 const router = express.Router();
 
+// 호스트와 비밀키가 모두 일치할 경우 cors 허용
+router.use(async (req, res, next) => {
+  const domain = await Domain.findOne({
+    where: { host: url.parse(req.get('origin')).host }, // http와 https를 때어낼때는 url.parse 메서드를 사용한다.
+  });
+  if (domain) {
+    cors({ origin: req.get('origin') })(req, res, next); // cors를 사용해서 다음 미들웨어로 전송
+  } else {
+    next(); //없다면 cors를 때고 다음 미들웨어 전송
+  }
+});
 // 토큰 발급 라우터
 router.post('/token', apiLimiter, async (req, res) => {
   const { clientSecret } = req.body;

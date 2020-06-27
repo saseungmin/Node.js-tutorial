@@ -41,7 +41,7 @@ const tokenResult = await axios.post(`${URL}`, {
 res.json(result.data);
 </pre>
 
-## ✔️ SNS API 호출 서버
+## 🌈 SNS API 호출 서버
 - `nodebird-api/routes/v1.js` 수정
 - `nodebird-call/routes/index.js` 코드 리팩토리
 > - 결과값의 코드에 따라 성공 여부를 알 수 있고, 실패한 경우에도 실패 종류를 알 수 있다.
@@ -58,3 +58,47 @@ res.json(result.data);
 - 토큰 만료(1분)
 
 ![token](./img/3.PNG)
+
+## 🌈 CORS 이해하기
+- nodebird-call의 프런트에서 nodebird-api의 서버 API 호출
+- `routes/index.js` `main`라우터 추가
+<pre>
+router.get('/',(req, res) => {
+  res.render('main', {key:process.env.CLIENT_SECRET});
+})
+</pre>
+- `views/main.pug` 작성
+- `Access-Control-Allow-Origin`이라는 헤더가 없다는 내용의 에러 발생.
+
+![ACAO](./img/4.PNG)
+
+- 클라이언트에서 서버로 요청을 보낼 때는, **클라이언트와 서버의 도메인이 일치하지 않으면 기본적으로 요청이 차단된다.**
+- 위 같은 문제를 CORS(Cross-Origin-Resource Sharing) 문제라고 한다.
+- 네트워크 tab에서 Method가 POST로 보냈지만 대신 OPTIONS로 표시된다.
+- OPTIONS **메서드는 실제 요청을 보내기 전에 서버가 이 도메인을 허용하는지 체크하는 역할을 한다.**
+
+![CORS](./img/5.PNG)
+- CORS 문제를 해결하기 위해 응답 헤더에 `Access-Control-Allow-Origin` 이라는 헤더를 넣어주어야 한다.
+- 이 헤더는 클라이언트 도메인의 요청을 허락하겠다는 뜻을 가지고 있다.
+- 응답은 서버에서 보내는 것이기 때문에 응답 헤더를 조작할려면 `nodebird-call`이 아니라 `nodebird-api`에서 바꿔준다.
+- `nodebird-api`에 cors 모듈을 설치한다.
+<pre>
+$ npm i cors
+</pre>
+
+- `nodebird-api/routes/v2.js` 수정
+- cors 미들웨어 적용
+<pre>
+const cors = require('cors');
+router.use(cors());
+</pre>
+
+![cors](./img/6.PNG)
+
+- 응답 헤더에 `Access-Control-Allow-Origin`이 *으로 되어있는 것은 모든 클라이언트의 요청을 허용한다는 것이다.
+
+![qw](./img/7.PNG)
+
+- 하지만 이것은 요청을 보내주는 주체가 클라이언트라서 비밀키가 모두에게 노출된다.
+- 때문에 이 비밀키를 가지고 다른 도메인들이 API 서버에 요청을 보낼 수 있다.
+- 이 문제를 막기 위해서는 처음에 비밀키 발급 시 허용한 도메인을 적게 하여 호스트와 비밀키가 모두 일치할 때만 CORS를 허용하게 수정한다.
