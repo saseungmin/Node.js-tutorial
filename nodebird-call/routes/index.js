@@ -2,9 +2,9 @@ const express = require("express");
 const axios = require("axios");
 
 const router = express.Router();
-const URL = "http://localhost:8002/v1";
+const URL = "http://localhost:8001/v2";
 
-axios.defaults.headers.origin = "http://localhost:8003";
+axios.defaults.headers.origin = "http://localhost:8004";
 const request = async (req, api) => {
   try {
     // 세션에 토큰이 없으면

@@ -9,6 +9,20 @@
 - Enter password: [패스워드 입력]
 - mysql> exit => 나가기
 
+#### 🔸 MAC 설치
+- Homebrew를 통해 설치
+<pre>
+$ brew install mysql
+$ brew services start mysql
+$ mysql_secure_installation
+</pre>
+- mysql 실행
+<pre>
+$ mysql.server start
+$ mysql -u root -p
+Enter password: 
+</pre>
+
 ## ✒ 데이터베이스 및 테이블 생성
 - 프롬프트에 접속 후 `CREATE SCHEMA [데이터베이스명]`이 데이터베이스를 생성한다.
 - MySQL에서는 데이터베이스와 Schema는 같은 개념이다.

@@ -15,7 +15,9 @@ const passportConfig = require('./passport');
 
 const authRouter = require('./routes/auth');
 const indexRouter = require('./routes');
+
 const v1 = require('./routes/v1');
+const v2 = require('./routes/v2');
 
 const app = express();
 sequelize.sync();
@@ -23,7 +25,7 @@ passportConfig(passport);
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
-app.set('port', process.env.PORT || 8002);
+app.set('port', process.env.PORT || 8001);
 
 app.use(morgan('dev'));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -50,6 +52,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/v1', v1);
+app.use('/v2', v2);
 app.use('/', indexRouter);
 app.use('/auth', authRouter);
 

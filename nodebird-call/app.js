@@ -11,7 +11,7 @@ const app = express();
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
-app.set('port', process.env.PORT || 8003);
+app.set('port', process.env.PORT || 8004);
 
 app.use(morgan('dev'));
 // dotenv를 사용해서 쿠키 비밀키 사용
@@ -34,6 +34,7 @@ app.use('/', indexRouter);
 app.use((req, res, next) => {
   const err = new Error('Not Found');
   err.status = 404;
+  console.error(err);
   next(err);
 });
 
