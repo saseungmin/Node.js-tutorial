@@ -19,3 +19,4 @@
 - JWT 토큰 인증
 - axios 패키지 사용하여 서버 요청 (https://github.com/saseungmin/Node.js-tutorial/tree/master/nodebird-call)
 - 사용량 제한(`express-rate-limit`)
+- CORS 이해하기

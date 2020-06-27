@@ -102,3 +102,27 @@ router.use(cors());
 - 하지만 이것은 요청을 보내주는 주체가 클라이언트라서 비밀키가 모두에게 노출된다.
 - 때문에 이 비밀키를 가지고 다른 도메인들이 API 서버에 요청을 보낼 수 있다.
 - 이 문제를 막기 위해서는 처음에 비밀키 발급 시 허용한 도메인을 적게 하여 호스트와 비밀키가 모두 일치할 때만 CORS를 허용하게 수정한다.
+<pre>
+const cors = require('cors');
+const url = require('url');
+
+// 호스트와 비밀키가 모두 일치할 경우 cors 허용
+router.use(async (req, res, next) => {
+  const domain = await Domain.findOne({
+    where: { host: url.parse(req.get('origin')).host }, // http와 https를 때어낼때는 url.parse 메서드를 사용한다.
+  });
+  if (domain) {
+    cors({ origin: req.get('origin') })(req, res, next); // cors를 사용해서 다음 미들웨어로 전송
+  } else {
+    next(); //없다면 cors를 때고 다음 미들웨어 전송
+  }
+});
+</pre>
+- 먼저 도메인 모델로 클라이언트 도메인(req.get('origin'))과 호스트가 일치하는 것 인지를 검사한다.
+- 일치하는 것이 있다면 cors를 허용하여 다음 미들웨어로 보내고, 일치하는 것이 없다면 cors없이 next를 호출한다.
+- `Access-Control-Allow-Origin` 확인
+
+![ing](./img/8.PNG)
+
+- 클라이언트와 서버에서 같은 비밀키를 써서 문제가 될 수 있다. 따라서 환경별로 키를 구분해서 발급하는 것이 바람직하다.
+- 카카오인 경우 REST API 키가 서버용 비밀키이고, Javascript 키가 클라이언트용 비밀키이다.
