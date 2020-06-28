@@ -1,5 +1,12 @@
-## ✔️ API 호출 서버
-> 📌 참고 문서 : https://github.com/axios/axios
+
+### 📌 참고 문서 
+> - Axios 공식 문서 : https://github.com/axios/axios
+> - Cors 공식 문서 : https://www.npmjs.com/package/cors
+> - JWT 토큰 설명 : https://jwt.io/
+> - Json Web Token 공식 문서 : https://www.npmjs.com/package/jsonwebtoken
+> - express-rate-limit 공식 문서 : https://www.npmjs.com/package/express-rate-limit
+> - UUID 공식 문서 : https://www.npmjs.com/package/uuid
+
 - 이 서버의 목적은 nodebird-api의 API를 통해 데이터를 가져온다.
 - *package.json* 의존성 설치 `$ npm i`
 <pre>
@@ -126,5 +133,3 @@ router.use(async (req, res, next) => {
 
 - 클라이언트와 서버에서 같은 비밀키를 써서 문제가 될 수 있다. 따라서 환경별로 키를 구분해서 발급하는 것이 바람직하다.
 - 카카오인 경우 REST API 키가 서버용 비밀키이고, Javascript 키가 클라이언트용 비밀키이다.
-
-### 참고 문서 

@@ -133,3 +133,13 @@ router.use(deprecated);
 - `v1`으로 요청 시
 
 ![ww](./img/4.PNG)
+
+## 🌈 [SNS API 호출 서버](https://github.com/saseungmin/Node.js-tutorial/tree/master/nodebird-call#-sns-api-%ED%98%B8%EC%B6%9C-%EC%84%9C%EB%B2%84)
+
+## 🌈 [CORS 이해하기](https://github.com/saseungmin/Node.js-tutorial/tree/master/nodebird-call#-cors-%EC%9D%B4%ED%95%B4%ED%95%98%EA%B8%B0)
+
+### 📌 추가 기능 구현해보기
+- 팔로워나 팔로잉 목록 가져오는 API 만들기
+- 무료인 도메인과 프리미어 도메인 간 사용량 제한 다르게 적용하기
+- 클라이언트용과 서버용 비밀키를 구분해서 발급하기
+- 클라이언트를 위해 API문서 작성하기
