@@ -21,4 +21,6 @@
 - 사용량 제한(`express-rate-limit`)
 - CORS 이해하기
 
-### ✒ [9. Web Socket으로 실시간 데이터 전송하기]
+### ✒ [9. Web Socket으로 실시간 데이터 전송하기](https://github.com/saseungmin/Node.js-tutorial/tree/master/gif-chat)
+- ws 모듈 사용하기
+- Socket.IO 사용하기
