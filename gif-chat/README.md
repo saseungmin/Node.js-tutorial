@@ -1,4 +1,9 @@
 # ✔ Web Socket 으로 실시간 데이터 전송
+### 📌 참고 문서
+> - 웹 소켓 설명 : https://ko.wikipedia.org/wiki/%EC%9B%B9%EC%86%8C%EC%BC%93
+> - WS 공식 문서 : https://www.npmjs.com/package/ws
+> - Socket.IO 공식 문서 : https://socket.io/
+
 ## 🌈 웹 소켓이란?
 - HTML5에서 새로 추가된 스펙으로 실시간 양방향 데이터 전송을 위한 기술
 - WS라는 프로토콜을 사용하여 브라우저와 서버가 WS 프로토콜을 지원하면 사용할 수 있다.
@@ -31,23 +36,23 @@
   }
 </pre>
 2. `.env`에 `COOKIE_SECRET=[쿠키 비밀키]` 작성
-3. `app.js`작성 (주석 참고)
+3. `app.js`작성 ([주석 참고](https://github.com/saseungmin/Node.js-tutorial/blob/master/gif-chat/app.js))
 4. `routes/index.js` 작성
 5. `ws` 모듈을 설치하여 노드에 웹 소켓 구현
 <pre>
 $ npm i ws
 </pre>
 6. `app.js`에 웹 소켓을 익스프레스 서버에 연결하는 부분 작성
-7. 웹 소켓 로직이 들어있은 `socket.js` 작성 (주석 참고)
-8. 양방향 통신이기 때문에 script 부분에 웹소켓 `views/index.pug` 작성 (클라이언트 부분, 주석 참고)
+7. 웹 소켓 로직이 들어있은 `socket.js` 작성 ([주석 참고](https://github.com/saseungmin/Node.js-tutorial/blob/master/gif-chat/socket.js))
+8. 양방향 통신이기 때문에 script 부분에 웹소켓 `views/index.pug` 작성 (클라이언트 부분, [주석 참고](https://github.com/saseungmin/Node.js-tutorial/tree/master/gif-chat/views))
 
 ## 🌈 Socket.IO 사용
 - 구현하고자 하는 서비스가 복잡해지면 Socket.IO를 사용하는 것이 편하다.
 <pre>
 $ npm i socket.io
 </pre>
-1. `socketio.js` 작성(주석 확인)
-2. `index.pug` 수정(주석 확인)
+1. `socketio.js` 작성([주석 확인](https://github.com/saseungmin/Node.js-tutorial/blob/master/gif-chat/socketio.js))
+2. `index.pug` 수정([주석 확인](https://github.com/saseungmin/Node.js-tutorial/tree/master/gif-chat/views))
 - Socket.IO는 기본적으로 먼저 **폴링 방식으로 서버와 연결**한다.
 - 그렇기 때문에 코드에서 HTTP 프로토콜을 사용한 것이다.
 
