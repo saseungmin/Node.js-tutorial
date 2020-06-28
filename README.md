@@ -20,3 +20,5 @@
 - axios 패키지 사용하여 서버 요청
 - 사용량 제한(`express-rate-limit`)
 - CORS 이해하기
+
+### ✒ [9. Web Socket으로 실시간 데이터 전송하기]
