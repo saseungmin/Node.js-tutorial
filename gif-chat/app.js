@@ -13,8 +13,11 @@ require('dotenv').config();
 // socket.io 사용
 const webSocket = require('./socketio');
 const indexRouter = require('./routes');
+// mongoose 스키마 연결
+const connect = require('./schemas');
 
 const app = express();
+connect();
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');

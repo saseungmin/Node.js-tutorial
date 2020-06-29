@@ -69,3 +69,12 @@ var socket = io.connect('http://localhost:8005',{
 </pre>
 
 ![websocket](./img/2.PNG)
+
+## 🌈 실시간 GIF 채팅방 만들기
+- 몽고디비와 몽고디비 ODM인 몽구스 사용
+- 이미지를 업로드하고 서버에 HTTP 요청을 할 것임으로 `multer`와 `axios` 설치
+- `color-hash` 모듈은 랜덤 색상을 구현해주는 모듈이다.
+<pre>
+$ npm i mongoose multer axios color-hash
+</pre>
+- 채팅방 스키마 생성 (`schemas/room.js`)
