@@ -77,4 +77,29 @@ var socket = io.connect('http://localhost:8005',{
 <pre>
 $ npm i mongoose multer axios color-hash
 </pre>
-- 채팅방 스키마 생성 (`schemas/room.js`)
+- 스키마 생성 (`schemas/`)
+- 채팅창과 메임 화면 채팅방 등록 화면 생성 (`views/`) (주석 참고)
+- 서버의 `chatsocket.js`에 웹 소켓 이벤트 연결 (주석 참고)
+<pre>
+  chat.on('connection', (socket) => {
+    console.log('chat 네임스페이스에 접속');
+    <b>const req = socket.request;
+    const {
+      headers: { referer },
+    } = req;</b>
+    const <b>roomId</b> = referer
+      .split('/')
+      [referer.split('/').length - 1].replace(/\?.+/, '');
+    // 방에 들어올때
+    socket.join(<b>roomId</b>);
+    socket.on('disconnect', () => {
+      console.log('chat 네임스페이스 접속 해제');
+      // 방에서 나갈때
+      socket.leave(<b>roomId</b>);
+    });
+  });
+</pre>
+- Socket.IO에는 네임스페이스보다 더 세부적인 개변으로 방(room)이라는 것이 존재한다.
+- 같은 네임스페이스 안에서도 같은 방에 들어 있는 소켓끼리만 데이터를 주고받을 수 있다.
+- `join` 메서드와 `leave` 메서드는 방의 아이디를 인자로 받는다.
+- `socket.request.headers.referer`를 통해 현재 웹 페이지의 URL을 가져올 수 있고, **URL에서 방 아이디 부분**을 추출한다.
