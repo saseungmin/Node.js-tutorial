@@ -7,17 +7,17 @@ block content
         legend 채팅내용
         #chat-list
             for chat in chats
-                if chat.user === user  // 내 메시지(mine)
+                if chat.user === user
                     .mine(style='color:'+chat.user)
                         div= chat.user
                         if chat.gif
                             img(src="/gif/"+chat.gif)
                         else
                             div= chat.chat
-                else if chat.user === 'system' // 시스템 메시지(system)
+                else if chat.user === 'system'
                     .system
                         div= chat.chat
-                else  // 남의 메시지 other
+                else 
                     .other(style='color:'+chat.user)
                         div= chat.user
                         if chat.gif
@@ -36,6 +36,7 @@ block content
         });
         // 입장
         socket.on('join', function(data) {
+            console.log(data);
             var div = document.createElement('div');
             div.classList.add('system');
             var chat = document.createElement('div');

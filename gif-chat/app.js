@@ -6,12 +6,14 @@ const path = require('path');
 const session = require('express-session');
 // 일회성 메시지를 웹 브라우저에 나타낼 떄 사용
 const flash = require('connect-flash');
+// 세션아이디를 HEX 형식의 색상 문자열로 바꾼다.
+const ColorHash = require('color-hash');
 require('dotenv').config();
 
 // ws 모듈 사용
 //const webSocket = require('./socket');
 // socket.io 사용
-const webSocket = require('./socketio');
+const webSocket = require('./chatsocket');
 const indexRouter = require('./routes');
 // mongoose 스키마 연결
 const connect = require('./schemas');
@@ -19,6 +21,17 @@ const connect = require('./schemas');
 const app = express();
 connect();
 
+// socket.IO session 미들웨어
+const sessionMiddleware = session({
+  resave: false, // 재저장을 계속 할 것인지
+  saveUninitialized: false, // 세션이 세션store에 저장되기전 Uninitialized 된 상태로 만들어서 저장을 안 시킨다.
+  secret: process.env.COOKIE_SECRET, // 비밀키 저장
+  // 세션과 쿠키 함께 사용
+  cookie: {
+    httpOnly: true,
+    secure: false,
+  },
+});
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 app.set('port', process.env.PORT || 8005);
@@ -36,19 +49,17 @@ app.use(express.urlencoded({ extended: false }));
 // dotenv를 사용해서 쿠키 비밀키 사용
 app.use(cookieParser(process.env.COOKIE_SECRET));
 // https://dalkomit.tistory.com/72 session 참고
-app.use(
-  session({
-    resave: false, // 재저장을 계속 할 것인지
-    saveUninitialized: false, // 세션이 세션store에 저장되기전 Uninitialized 된 상태로 만들어서 저장을 안 시킨다.
-    secret: process.env.COOKIE_SECRET, // 비밀키 저장
-    cookie: {
-      // 세션과 쿠키 함께 사용
-      httpOnly: true,
-      secure: false,
-    },
-  }),
-);
+app.use(sessionMiddleware);
 app.use(flash());
+
+// colorHash를 이용하여 session.color에 Hex값 부여
+app.use((req, res, next) => {
+  if (!req.session.color) {
+    const colorHash = new ColorHash();
+    req.session.color = colorHash.hex(req.sessionID);
+  }
+  next();
+});
 
 app.use('/', indexRouter);
 
@@ -77,4 +88,5 @@ const server = app.listen(app.get('port'), () => {
 });
 
 // 웹 소켓을 익스프레스 서버에 연결
-webSocket(server);
+// express-session 공유
+webSocket(server, app, sessionMiddleware);
