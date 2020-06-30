@@ -27,3 +27,4 @@
 - mongoDB의 `mongoose` 사용
 - 이미지 업로드와 서버에 HTTP 요청(`multer`, `axios`)
 - 랜덤 색상으로 자신, 시스템, 상대방 색상 변경(`color-hash`)
+- 채팅룸, 채팅방

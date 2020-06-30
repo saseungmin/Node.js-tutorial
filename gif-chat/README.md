@@ -103,3 +103,34 @@ $ npm i mongoose multer axios color-hash
 - 같은 네임스페이스 안에서도 같은 방에 들어 있는 소켓끼리만 데이터를 주고받을 수 있다.
 - `join` 메서드와 `leave` 메서드는 방의 아이디를 인자로 받는다.
 - `socket.request.headers.referer`를 통해 현재 웹 페이지의 URL을 가져올 수 있고, **URL에서 방 아이디 부분**을 추출한다.
+- 접속한 사용자에게 세션 아이디(`req.sessionID`)를 이용하여 `color-hash`패키지로 랜덤 색상으로 고유한 색상을 부여한다.
+- `color-hash` 패키지는 세션 아이디를 HEX 형식의 색상 문자열로 바꿔주는 패키지이다. 또한, 해시이므로 같은 세션 아이디는 항상 같은 색상 문자열로 바뀐다.
+- 다만, 사용자가 많아질 경우에는 색상이 중복되는 문제가 있을 수 있다.
+<pre>
+// colorHash를 이용하여 session.color에 Hex값 부여하여 사용자 아이디처럼 사용한다.
+app.use((req, res, next) => {
+  // session.color가 존재하지 않으면
+  if(!req.session.color){
+    const colorHash = new ColorHash();
+    <b>req.session.color = colorHash.hex(req.sessionID);</b>
+  }
+  next();
+})
+</pre>
+- 하지만 Socket.IO에서 세션에 졉근할려면 추가 작업이 필요하다.
+- Socket.IO도 미들웨어를 통해 `express-session`을 공유한다.
+<pre>
+const <b>sessionMiddleware</b> = session({
+  resave: false, // 재저장을 계속 할 것인지
+  saveUninitialized: false, // 세션이 세션store에 저장되기전 Uninitialized 된 상태로 만들어서 저장을 안 시킨다.
+  secret: process.env.COOKIE_SECRET, // 비밀키 저장
+  // 세션과 쿠키 함께 사용
+  cookie: {
+    httpOnly: true,
+    secure: false,
+  },
+});
+// ...
+webSocket(server, app, <b>sessionMiddleware</b>);
+</pre>
+- `chatsocket.js`에 미들웨어 장착 ([주석 참고](https://github.com/saseungmin/Node.js-tutorial/blob/master/gif-chat/chatsocket.js)) 
