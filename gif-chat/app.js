@@ -51,7 +51,6 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
 // https://dalkomit.tistory.com/72 session 참고
 app.use(sessionMiddleware);
 app.use(flash());
-
 // colorHash를 이용하여 session.color에 Hex값 부여
 app.use((req, res, next) => {
   if (!req.session.color) {

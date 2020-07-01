@@ -134,3 +134,46 @@ const <b>sessionMiddleware</b> = session({
 webSocket(server, app, <b>sessionMiddleware</b>);
 </pre>
 - `chatsocket.js`에 미들웨어 장착 ([주석 참고](https://github.com/saseungmin/Node.js-tutorial/blob/master/gif-chat/chatsocket.js)) 
+- `routes/index.js` 라우터 작성 ([주석](https://github.com/saseungmin/Node.js-tutorial/blob/master/gif-chat/routes/index.js))
+<pre>
+  // io객체 req.app.get('io')으로 접근 가능
+  const io = req.app.get('io');
+  // main.pug에 newRoom socket.io
+  // /room 네임스페이스에 연결한 모든 클라이언트에게 데이터를 보내는 메서드이다.
+  io.of('/room').emit('newRoom', newRoom);
+</pre>
+- `io.of('/chat').adapter.rooms`에 방 목록이 들어 있다.
+- `io.of('/chat').adapter.rooms[req.params.id]`를 하면 해당 방의 소켓 목록이 나온다.
+<pre>
+  const { rooms } = io.of('/chat').adapter;
+  rooms[req.params.id]
+</pre>
+## 🌈 채팅 구현
+- 프런트(`views/chat.pug`)에서는 서버에서 보내는 채팅 데이터를 받을 소켓 이벤트 리스너 생성(chat 이벤트 리스너 추가)
+- `routes/index.js`에 채팅하는 부분 추가
+- `req.app.get('io').of('/chat').to(방 아이디).emit` 으로 같은 방에 들어 있는 소켓들에게 메시지 데이터를 전송
+<pre>
+  const chat = new Chat({
+    room: req.params.id,
+    user: req.session.color,
+    chat: req.body.chat,
+  });
+  // 채팅 mongoDB에 저장
+  await chat.save();
+  req.app.get('io').of('/chat').to(req.params.id).emit('chat', chat);
+  res.send('ok');
+</pre>
+
+### 📌 기타 Socket.IO API
+- 특정인에게 메시지 보내기
+<pre>
+socket.io(소켓 아이디).emit(이벤트, 데이터);
+</pre>
+- 나를 제외한 전체에게 메시지 보내기
+<pre>
+socket.broadcast.emit(이벤트, 데이터);
+// 특정 방 안에서 나를 제외한 나머지에게 매시지 보내기
+socket.broadcast.to(방 아이디).emit(이벤트, 데이터);
+</pre>
+
+## 🌈 GIF 이미지 전송하기
