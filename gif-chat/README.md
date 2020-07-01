@@ -3,7 +3,8 @@
 > - 웹 소켓 설명 : https://ko.wikipedia.org/wiki/%EC%9B%B9%EC%86%8C%EC%BC%93
 > - WS 공식 문서 : https://www.npmjs.com/package/ws
 > - Socket.IO 공식 문서 : https://socket.io/
-
+> - color-hash 공식 문서 : https://www.npmjs.com/package/color-hash
+> - proxy-addr 공식 문서 : https://www.npmjs.com/package/proxy-addr
 ## 🌈 웹 소켓이란?
 - HTML5에서 새로 추가된 스펙으로 실시간 양방향 데이터 전송을 위한 기술
 - WS라는 프로토콜을 사용하여 브라우저와 서버가 WS 프로토콜을 지원하면 사용할 수 있다.
