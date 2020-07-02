@@ -178,3 +178,48 @@ socket.broadcast.to(방 아이디).emit(이벤트, 데이터);
 </pre>
 
 ## 🌈 GIF 이미지 전송하기
+- 프런트 화면에 이미지를 선택했을 때 업로드하는 이벤트 리스너 추가(`view/chat.pug`)
+<pre>
+xhr.open('POST', <b>'/room/#{room._id}/gif'</b>);
+</pre>
+- 위 주소에 상응하는 라우터를 작성한다. (`routes/index.js` [주석 참고](https://github.com/saseungmin/Node.js-tutorial/blob/master/gif-chat/routes/index.js))
+- 파일이 업로드된 후에 내용을 저장하고, 방의 모든 소켓에게 채팅 데이터 전달.
+<pre>
+// upload 변수는 single, array, fields, none 등의 메서드를 가지고 있다.
+// single 하나의 이미지를 업로드할 때 사용한다.
+// array, fields는 여러 개의 이미지를 업로드할 때 사용한다.
+router.post('/room/:id/gif', upload.single('gif'), async (req, res, next) => {
+  try {
+    const chat = new Chat({
+      room: req.params.id,
+      user: req.session.color,
+      gif: req.file.filename,
+    });
+    await chat.save();
+    // io의 chat 네임스페이스에 해당 채팅룸에 'chat'으로 보낸다.
+    req.app.get('io').of('/chat').to(req.params.id).emit('chat', chat);
+    res.send();
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+</pre>
+
+- 이미지를 제공할 `uploads` 폴더를 `express.static` 미들웨어로 연결한다. (`app.js`)
+<pre>
+app.use('/gif', express.static(path.join(__dirname,'uploads')));
+</pre>
+
+- 실행결과
+
+![gif](./img/3.PNG)
+
+<hr>
+
+### 📌 추가 작업하기
+- 채팅방에 현재 참여자 수나 목록 표시하기
+- 시스템 메시지까지 DB에 저장하기
+- 채팅방에서 한 사람에게 귓속말 보내기 (socket.io(소켓 아이디))
+- 방장 기능 구현(방에 방장 정보를 저장한 후 방장이 나갔을 때 방장 위임 기능)
+- 강퇴 기능 구현하기

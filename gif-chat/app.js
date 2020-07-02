@@ -41,6 +41,8 @@ app.set('port', process.env.PORT || 8005);
 app.use(morgan('dev'));
 // public 정적 파일 제공 미들웨어
 app.use(express.static(path.join(__dirname, 'public')));
+// /gif 일때, uploads 정적 파일 제공
+app.use('/gif', express.static(path.join(__dirname,'uploads')));
 // BodyParser HTTPpost put 요청시 request body 에 들어오는 데이터값을 읽을 수 있는 구문으로 파싱함과
 // 동시에 req.body 로 입력해주어 응답 과정에서 요청에 body 프로퍼티를 새로이 쓸 수 있게 해주는 미들웨어
 // https://velog.io/@yejinh/express-%EB%AF%B8%EB%93%A4%EC%9B%A8%EC%96%B4-bodyParser-%EB%AA%A8%EB%93%88#urlencoded-extended-false- 참고
