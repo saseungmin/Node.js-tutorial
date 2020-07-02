@@ -29,3 +29,6 @@
 - 랜덤 색상으로 자신, 시스템, 상대방 색상 변경(`color-hash`)
 - 채팅룸, 채팅방
 - 채팅 GIF 이미지 전송
+
+### ✒ [10. 실시간 경매 시스템 만들기](https://github.com/saseungmin/Node.js-tutorial/tree/master/node-auction)
+- MySQL (sequelize)
