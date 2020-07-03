@@ -30,3 +30,9 @@ db.Good.hasMany(db.Auction);
 db.Auction.belongsTo(db.User);
 db.Auction.belongsTo(db.Good);
 </pre>
+
+#### 🔸 로그인을 위한 passport 설정하기
+<pre>
+$ npm i passport passport-local bcrypt
+</pre>
+#### 🔸 클라이언트 뷰 단 설정하기

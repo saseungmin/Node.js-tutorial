@@ -8,8 +8,9 @@ const router = express.Router();
 
 router.post('/join', isNotLoggedIn, async (req, res, next) => {
   const { email, nick, password, money } = req.body;
+  console.log(req.body);
   try {
-    const exUser = await User.findOne({ where: email });
+    const exUser = await User.findOne({ where: { email } });
     if (exUser) {
       req.flash('joinError', '이미 가입된 이메일입니다.');
       return res.redirect('/join');
