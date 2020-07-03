@@ -32,8 +32,11 @@ const sessionMiddleware = session({
     secure: false,
   },
 });
+// views 적용
 app.set('views', path.join(__dirname, 'views'));
+// view 템플릿 엔진을 pug로 적용
 app.set('view engine', 'pug');
+// 포트 설정
 app.set('port', process.env.PORT || 8005);
 
 // 개발 시 사용(dev, short)
