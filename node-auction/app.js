@@ -48,7 +48,6 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(sessionMiddleware);
 // 이작업을 안하면 passport.initialize() middleware not in use 에러가 뜬다
 // 이유는 https://velog.io/@cyranocoding/PASSPORT.js-%EB%A1%9C-%EC%86%8C%EC%85%9C-%EB%A1%9C%EA%B7%B8%EC%9D%B8-%EA%B5%AC%ED%98%84%ED%95%98%EA%B8%B0#sessions-optional
-
 app.use(passport.initialize()); // passport 구동
 app.use(passport.session()); // 세션 연결
 app.use(flash());

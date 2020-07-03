@@ -35,4 +35,27 @@ db.Auction.belongsTo(db.Good);
 <pre>
 $ npm i passport passport-local bcrypt
 </pre>
-#### 🔸 클라이언트 뷰 단 설정하기
+- `.env` 파일 설정
+<pre>
+COOKIE_SECRET=[쿠키 비밀키]
+</pre>
+- `app.js`
+- 이작업을 안하면 `passport.initialize() middleware not in use` 에러가 뜬다.
+- [에러 설명](https://velog.io/@cyranocoding/PASSPORT.js-%EB%A1%9C-%EC%86%8C%EC%85%9C-%EB%A1%9C%EA%B7%B8%EC%9D%B8-%EA%B5%AC%ED%98%84%ED%95%98%EA%B8%B0#sessions-optional)
+<pre>
+app.use(passport.initialize()); // passport 구동
+app.use(passport.session()); // 세션 연결
+</pre>
+#### 🔸 클라이언트 뷰 단 설정하기 (views 폴더)
+- views/ 폴더
+- `routes/index.js` 작성
+- res.locals.user 로 모든 pug 템플릿에 사용자 정보를 변수로 집어 넣는다.
+- 이렇게 하면 res.render 메서드에 user:req.user를 하지않아도 되므로 중복제거가 가능하다.
+<pre>
+router.use((req, res, next) => {
+  res.locals.user = req.user;
+  next();
+});
+</pre>
+
+![img](./img/1.PNG)

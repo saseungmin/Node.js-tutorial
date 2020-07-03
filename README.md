@@ -32,3 +32,4 @@
 
 ### ✒ [10. 실시간 경매 시스템 만들기](https://github.com/saseungmin/Node.js-tutorial/tree/master/node-auction)
 - MySQL (sequelize)
+- passport 로그인 인증
