@@ -12,6 +12,9 @@ const indexRouter = require('./routes/index');
 const authRouter = require('./routes/auth');
 const { sequelize } = require('./models');
 const passportConfig = require('./passport');
+// 서버와 sse, socket.io 모듈 연결
+const sse = require('./sse');
+const webSocket = require('./socket');
 
 const app = express();
 sequelize.sync();
@@ -73,6 +76,11 @@ app.use(function (err, req, res, next) {
   res.render('error');
 });
 
-app.listen(app.get('port'), () => {
+const server = app.listen(app.get('port'), () => {
   console.log(app.get('port'), '번 포트에서 대기 중');
 });
+
+// webSocket과 연결
+webSocket(server, app);
+// 서버센트 이벤트와 서버 연결
+sse(server);

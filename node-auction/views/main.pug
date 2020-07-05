@@ -17,3 +17,7 @@ block content
                     td= good.price
                     td.time(data-start=good.createdAt) 00:00:00
                     td: a.enter.btn(href="/good/"+good.id) 입장
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/eventsource-polyfill/0.9.6/eventsource.min.js")
+    script
+        include main.js
+    

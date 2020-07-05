@@ -86,4 +86,80 @@ router.post(
   },
 );
 
+// 해당 상품에 대한 렌더링
+router.get('/good/:id', isLoggedIn, async (req, res, next) => {
+  try {
+    const [good, auction] = await Promise.all([
+      Good.findOne({
+        where: { id: req.params.id },
+        include: {
+          // Good 모델과 User 모델은 현재 1:N 관계가 두번 연결(owner, sold)되어 있으므로
+          // 이런 경우는 어떤 관계를 include 해야할지 as로 밝혀줘야 한다.
+          model: User,
+          as: 'owner',
+        },
+      }),
+      Auction.findAll({
+        where: { goodId: req.params.id },
+        include: {
+          model: User,
+        },
+        order: [['bid', 'ASC']],
+      }),
+    ]);
+    res.render('auction', {
+      title: `${good.name} - NodeAuction`,
+      good,
+      auction,
+      auctionError: req.flash('auctionError'),
+    });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+// 사용자가 입찰가 전송
+// 클라이언트로부터 받은 입찰 정보를 저장한다.
+router.post('/good/:id/bid', isLoggedIn, async (req, res, next) => {
+  try {
+    const { bid, msg } = req.body;
+    const good = await Good.findOne({
+      where: { id: req.params.id },
+      include: { model: Auction },
+      // Auction 테이블에 bid(입찰가)가 높은 순으로 정렬
+      order: [[{ model: Auction }, 'bid', 'DESC']],
+    });
+    if (good.price > bid) {
+      // 시작 가격보다 낮게 입찰하면
+      return res.status(403).send('시작 가격보다 높게 입력해야 합니다.');
+    }
+    // 경매 종료 시간이 지났으면
+    // 경매 등록 시간 + 24시간 < 현재 시간
+    if (new Date(good.createdAt).valueOf() + 24 * 60 * 60 * 1000 < new Date()) {
+      return res.status(403).send('경매가 이미 종료되었습니다.');
+    }
+    // 직전 입찰가와 현재 입찰가 비교
+    if (good.auctions[0] && good.auctions[0].bid >= bid) {
+      return res.status(403).send('이전 입찰가보다 높아야 합니다.');
+    }
+    const result = await Auction.create({
+      bid,
+      msg,
+      userId: req.user.id,
+      goodId: req.params.id,
+    });
+    // socket.io로 해당 입찰방에 입찰자, 입찰가격, 입찰 메시지를 전송한다.
+    req.app.get('io').to(req.params.id).emit('bid', {
+      bid: result.bid,
+      msg: result.msg,
+      nick: req.user.nick,
+    });
+    return res.send('ok');
+  } catch (error) {
+    console.error(error);
+    return next(error);
+  }
+});
+
 module.exports = router;
