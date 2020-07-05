@@ -15,10 +15,13 @@ const passportConfig = require('./passport');
 // 서버와 sse, socket.io 모듈 연결
 const sse = require('./sse');
 const webSocket = require('./socket');
+// 낙찰자가 없고 생성된지 24시간이 지난 경매를 찾아서 낙찰자를 정해준다.
+const checkAuction = require('./checkAuction');
 
 const app = express();
 sequelize.sync();
 passportConfig(passport);
+checkAuction();
 
 const sessionMiddleware = session({
   resave: false, // 재저장을 계속 할 것인지

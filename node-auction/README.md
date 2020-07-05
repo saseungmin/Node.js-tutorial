@@ -1,4 +1,21 @@
 # ✔ 실시간 경매 시스템 만들기
+### 📌 참고 문서
+> - 서버센트 이벤트 설명
+>   - https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events
+>   - https://hamait.tistory.com/792
+> - 시퀄라이즈 Querying
+>   - https://velog.io/@cadenzah/sequelize-document-2
+> - node-schedule 공식 문서
+>   - https://www.npmjs.com/package/node-schedule
+> - node-schedule 설명
+>   - https://yonghyunlee.gitlab.io/node/node-schedule/
+> - 스케줄 업무 자동화: Node-cron vs Node-schedule 비교
+>   - https://velog.io/@filoscoder/%EC%8A%A4%EC%BC%80%EC%A4%84-%EC%97%85%EB%AC%B4-%EC%9E%90%EB%8F%99%ED%99%94-Node-cron-vs-Node-schedule-%EB%B9%84%EA%B5%90-clk4dyynve
+> - SSE 공식 문서
+>   - https://www.npmjs.com/package/sse
+> - SSE 설명
+>   - https://hamait.tistory.com/792
+
 ## 🌈 기본 설정
 - `package.json` 작성
 <pre>
@@ -125,3 +142,58 @@ es.onmessage = function (e) {
 - `routes/index.js` [주석 참고](https://github.com/saseungmin/Node.js-tutorial/blob/master/node-auction/routes/index.js)
 
 ![sse2](./img/3.PNG)
+
+## 🌈 스케줄링
+- 경매 종료 (24시간) 후에 낙찰자를 정하는 시스템 구현
+- *node-schedule* 묘듈 설치
+<pre>
+$ npm i node-schedule
+</pre>
+- `routes/index.js` 에 스케줄러 등록
+<pre>
+  const end = new Date();
+  end.setDate(end.getDate() + 1); // 하루 뒤
+  <b>schedule.scheduleJob</b>(end, async () => {
+    // ...
+  });
+</pre>
+- `schedule` 객체의 `scheduleJob` 메서드로 일정을 예약할 수 있다.
+- 첫 번째 인자로 실행될 시각을 넣고, 두번째 인자로 해당 시각이 되었을 때 수행할 콜백 함수를 넣는다.
+- 경매 모델에서 가장 높은 입찰을 한 사람을 찾아 상품 모델의 낙찰자 아이디에 넣어 준다. ([index.js 주석 참고](https://github.com/saseungmin/Node.js-tutorial/blob/master/node-auction/routes/index.js))
+- 낙찰자의 보유자산을 낙찰 금액만큼 빼준다.
+<pre>
+  // User의 돈에 낙찰가를 빼준다.
+  await User.update(
+    { money: <b>sequelize.literal(`money - ${success.bid}`)</b> },
+    { where: { id: success.id } },
+  );
+</pre>
+#### 📌 *node-schedule* 의 단점
+- 스케줄링이 노드 기반으로 작동하므로 노드가 종료되면 스케줄 예약도 같이 종료된다.
+- 노드를 계속 켜두면 되지만 서버가 어떤 에러로 인해 종료될지 예측하기 어렵다.
+- 따라서, 서버가 시작될 때 경매 시작 후 24시간이 지났지만 낙찰자는 없는 경매를 찾아서 낙찰자를 지정해주는 코드 추가.
+- 낙찰자가 없고 생성된지 24시간이 지난 경매를 찾아서 낙찰자를 정해준다.(`checkAuction.js`)
+
+## 🌈 마무리 작업
+- 낙찰자가 낙찰 내역을 볼 수 있도록 하기 (`routes/index.js` 수정,`views/list.pug` 작성,`views/layout.pug` 수정)
+<pre>
+router.get('/list', isLoggedIn, async (req, res, next) => {
+  try {
+    const goods = await Good.findAll({
+      where:{soldId : req.user.id},
+      include:{model:Auction},
+      order:[[{model:Auction}, 'bid', 'DESC']]
+    });
+    res.render('list', {title:'낙찰 목록 - NodeAuction', goods});
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+})
+</pre>
+
+### 📌 추가 작업하기
+- 상품 등록자는 참여할 수 없게 만들기
+- 경매 시간을 자유롭게 조정할 수 있게 만들기
+- 노드 서버가 꺼졌다 다시 켜졌을 때 스케줄러 다시 생성하기
+- 아무도 입찰을 하지 않아 낙찰자가 없을 떄 로직 구현

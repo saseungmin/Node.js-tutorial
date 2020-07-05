@@ -2,8 +2,9 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const schedule = require('node-schedule');
 
-const { Auction, Good, User } = require('../models');
+const { Auction, Good, User, sequelize } = require('../models');
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
 
 const router = express.Router();
@@ -71,12 +72,37 @@ router.post(
   async (req, res, next) => {
     try {
       const { name, price } = req.body;
-      await Good.create({
+      const good = await Good.create({
         // 상품 등록 ownerId
         ownerId: req.user.id,
         name,
         img: req.file.filename,
         price,
+      });
+      const end = new Date();
+      end.setDate(end.getDate() + 1); // 하루 뒤
+      schedule.scheduleJob(end, async () => {
+        // 입찰가가 가장높은 것 하나
+        const success = await Auction.findOne({
+          // 해당 상품 한개 good.id
+          where: { goodId: good.id },
+          order: [['bid', 'DESC']],
+        });
+
+        // 해당상품의 낙찰자를 success.userId 로 update
+        await Good.update(
+          { soldId: success.userId },
+          { where: { id: good.id } },
+        );
+        // User의 돈에 낙찰가를 빼준다.
+        await User.update(
+          {
+            money: sequelize.literal(`money - ${success.bid}`),
+          },
+          {
+            where: { id: success.id },
+          },
+        );
       });
       res.redirect('/');
     } catch (error) {
@@ -161,5 +187,19 @@ router.post('/good/:id/bid', isLoggedIn, async (req, res, next) => {
     return next(error);
   }
 });
+
+router.get('/list', isLoggedIn, async (req, res, next) => {
+  try {
+    const goods = await Good.findAll({
+      where:{soldId : req.user.id},
+      include:{model:Auction},
+      order:[[{model:Auction}, 'bid', 'DESC']]
+    });
+    res.render('list', {title:'낙찰 목록 - NodeAuction', goods});
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+})
 
 module.exports = router;
