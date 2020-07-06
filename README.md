@@ -35,3 +35,6 @@
 - passport 로그인 인증
 - SSE 패키지 (서버센트 이벤트 사용)
 - Socket.IO (웹 소켓 사용)
+
+### ✒ [11. 구글 API로 장소 검색 서비스 만들기](https://github.com/saseungmin/Node.js-tutorial/tree/master/node-place)
+- MongoDB (ODM-mongoose)
