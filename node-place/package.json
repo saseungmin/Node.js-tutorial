@@ -1,0 +1,25 @@
+{
+  "name": "node-place",
+  "version": "0.0.1",
+  "description": "구글 API를 사용한 장소 검색 서비스",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon app"
+  },
+  "author": "seungmin",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "^1.4.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "mongoose": "^5.9.21",
+    "morgan": "^1.10.0",
+    "pug": "^3.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
