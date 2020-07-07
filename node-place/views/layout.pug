@@ -1,0 +1,17 @@
+doctype
+html
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title= title || '장소 검색 서비스'
+        link(rel="stylesheet", href="/main.css")
+    body
+        form#search-form( method="get")
+            span 장소 검색 서비스
+            input#search
+            button#search-btn.btn 검색
+            ul#search-list
+        block content
+        script
+            include layout.js
+        
