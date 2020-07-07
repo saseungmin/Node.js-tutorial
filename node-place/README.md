@@ -1,4 +1,7 @@
 # ✔ 구글 API로 장소 검색 서비스 만들기
+### 📌 참고 문서 
+> - Google Maps Platform : https://cloud.google.com/maps-platform/
+> - Google Maps Platform 시작하기 : https://developers.google.com/maps/gmp-get-started
 ## 🌈 기본 설정
 - *package.json* 패키지 설치
 <pre>

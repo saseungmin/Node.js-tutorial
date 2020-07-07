@@ -38,3 +38,5 @@
 
 ### ✒ [11. 구글 API로 장소 검색 서비스 만들기](https://github.com/saseungmin/Node.js-tutorial/tree/master/node-place)
 - MongoDB (ODM-mongoose)
+- PUG 탬플릿
+- Google Places API (https://cloud.google.com/maps-platform/)
