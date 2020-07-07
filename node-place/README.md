@@ -95,3 +95,7 @@ predictions.forEach(function (pred) {
 - 검색 결과
 
 ![search4](./img/4.PNG)
+
+- 검색결과 mongoDB 저장
+
+![search5](./img/5.PNG)
