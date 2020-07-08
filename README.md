@@ -40,3 +40,4 @@
 - MongoDB (ODM-mongoose)
 - PUG 탬플릿
 - Google Places API (https://cloud.google.com/maps-platform/)
+- Google Maps API

@@ -99,3 +99,43 @@ predictions.forEach(function (pred) {
 - 검색결과 mongoDB 저장
 
 ![search5](./img/5.PNG)
+
+
+## 🌈 Google Maps API 사용하기
+- `views/result.pug` 수정
+- 검색 결과 렌더링
+<pre>
+script.
+    var positions = [];
+for result in results
+    script.
+        positions.push({
+            lat: #{result.geometry.location.lat},
+            lng: #{result.geometry.location.lng},
+            name: '#{result.name}',
+            id: '#{result.place_id}',
+        });
+</pre>
+- `initMap` 함수가 호출되면 `new google.maps.Map(태그, 옵션)`으로 지도를 렌더링한다.
+- `new google.maps.Marker(옵션)`로 지도에 마커를 표시한다.
+<pre>
+script.
+    function initMap(){
+        var center = positions[0] || {lat: 37.540705, lng: 126.956764};
+        var map = new google.maps.Map(document.getElementById('map'),{
+            zoom:15, // 확대 정도
+            center:center // 지도의 중심 좌표
+        });
+        positions.forEach(function(pos) {
+            new google.maps.Marker({
+                position:{lat: pos.lat, lng: pos.lng}, // 위도와 경도
+                map:map, // 마커를 표시할 지도를 가리킨다.
+                title:pos.name // 마우스를 올렸을때 툴팁 메시지 설정
+            });
+        });
+    }
+</pre>
+- 구글 지도 관련 스크립트를 불러오는 태그
+<pre>
+  script(async defer src="https://maps.googleapis.com/maps/api/js?key=[자신 키]&callback=initMap")
+</pre>

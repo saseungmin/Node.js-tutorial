@@ -11,7 +11,6 @@ document.querySelector('#search').addEventListener('keyup', function (e) {
         ul.innerHTML = '';
         // 받은 데이터 for문 돌려준다.
         predictions.forEach(function (pred) {
-          console.log(pred);
           var li = document.createElement('li');
           li.textContent = pred.terms[0].value;
           li.onclick = function () {
@@ -48,6 +47,6 @@ document.querySelector('#search-form').addEventListener('submit', function (e) {
     return false;
   }
   // 검색어에 맞게 form요청 전송
-  this.action = '/search' + this.search.value.trim();
+  this.action = '/search/' + this.search.value.trim();
   return this.submit();
 });
