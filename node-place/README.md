@@ -154,10 +154,10 @@ navigator.geolocation.getCurrentPosition(function (position){
   timeout:Infinity
 });
 </pre>
-- 쿼리스트링으로 lat과 lng이 제공되면 places API 대신에 placesNearBy API를 사용한다. (`routes/index.js`)
-- keyword 옵션은 찾을 검색어, location은 위도와 경도, rankby는 정렬 순서, language는 검색 언어를 의미한다.
-- radius는 인기순으로 정렬하고 싶을 때 검색 반경을 입력하는 용도이다.
-- rankby 대신 radius를 입력하면 반경 내 장소들을 인기순으로 검색한다.
+- 쿼리스트링으로 `lat`과 `lng`이 제공되면 *places API* 대신에 *placesNearBy API*를 사용한다. (`routes/index.js`)
+- `keyword` 옵션은 찾을 검색어, `location`은 위도와 경도, `rankby`는 정렬 순서, `language`는 검색 언어를 의미한다.
+- `radius`는 인기순으로 정렬하고 싶을 때 검색 반경을 입력하는 용도이다.
+- `rankby` 대신 `radius`를 입력하면 반경 내 장소들을 인기순으로 검색한다.
 <pre>
 const googlePlacesNearby = util.promisify(googleMapsClient.placesNearby);
 ...
