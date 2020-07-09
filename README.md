@@ -41,3 +41,4 @@
 - PUG 탬플릿
 - Google Places API (https://cloud.google.com/maps-platform/)
 - Google Maps API
+- 위치 기반 / 즐겨찾기

@@ -46,7 +46,42 @@ document.querySelector('#search-form').addEventListener('submit', function (e) {
     this.search.focus();
     return false;
   }
+  if (this.type.value) {
+    return (location.href = '/search/' + this.search.value.trim() + '?type=' + this.type.value);
+  }
   // 검색어에 맞게 form요청 전송
   this.action = '/search/' + this.search.value.trim();
   return this.submit();
+});
+
+document.querySelector('#loc-search-btn').addEventListener('click', function (e) {
+  e.preventDefault();
+  if (navigator.geolocation) {
+    // GPS를 지원하면
+    navigator.geolocation.getCurrentPosition(
+      function (position) {
+        var search = document.querySelector('#search');
+        var type = document.querySelector('#type').value;
+
+        if (!search.value || !search.value.trim()) {
+          search.focus();
+          return false;
+        }
+        var lat = position.coords.latitude;
+        var lng = position.coords.longitude;
+        location.href =
+          '/search/' + search.value.trim() + '?lat=' + lat + '&lng=' + lng + '&type=' + type;
+      },
+      function () {
+        alert('내 위치 확인 권한을 허용하세요.');
+      },
+      {
+        enableHighAccuracy: false,
+        maximumAge: 0,
+        timeout: Infinity,
+      },
+    );
+  } else {
+    alert('GPS를 지원하지 않습니다.');
+  }
 });

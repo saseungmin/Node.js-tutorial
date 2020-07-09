@@ -139,3 +139,76 @@ script.
 <pre>
   script(async defer src="https://maps.googleapis.com/maps/api/js?key=[자신 키]&callback=initMap")
 </pre>
+
+## 🌈 위치 기반 검색 수행하기
+- 정확도를 높이기 위해 내 위치 주변을 검색하는 API와 특정 종류의 장소(카페, 병원등)만 검색하는 API를 만든다.
+- 프런트엔드에서 나의 위치를 확인하는 방법 (`layout.pug`)
+<pre>
+navigator.geolocation.getCurrentPosition(function (position){
+// ...
+},function(){
+  alert('내 위치 확인 권한을 허용하세요.');
+},{
+  enableHighAccuracy:false,
+  maximumAge:0,
+  timeout:Infinity
+});
+</pre>
+- 쿼리스트링으로 lat과 lng이 제공되면 places API 대신에 placesNearBy API를 사용한다. (`routes/index.js`)
+- keyword 옵션은 찾을 검색어, location은 위도와 경도, rankby는 정렬 순서, language는 검색 언어를 의미한다.
+- radius는 인기순으로 정렬하고 싶을 때 검색 반경을 입력하는 용도이다.
+- rankby 대신 radius를 입력하면 반경 내 장소들을 인기순으로 검색한다.
+<pre>
+const googlePlacesNearby = util.promisify(googleMapsClient.placesNearby);
+...
+// 위도와 경도가 존재하면
+if (lat && lng) {
+  response = await googlePlacesNearby({
+    keyword: req.params.query,
+    location: `${lat},${lng}`,
+    rankby: 'distance',
+    language: 'ko',
+  });
+}
+</pre>
+- npm start 뒤 위치 권한을 수락한 후 검색 결과
+
+![api](./img/6.PNG)
+
+### ✒ 장소의 종류 지정하기
+- places와 placesNear API의 옵션으로 type을 줄 수 있다.
+- [type 목록](https://developers.google.com/places/web-service/supported_types)
+- type으로 학교 검색시 (http://localhost:8015/search/%EC%82%BC%EB%B6%80%EC%95%84%ED%8C%8C%ED%8A%B8?lat=36.32005120000001&lng=127.39215359999999&type=school)
+
+![loca](./img/7.PNG)
+
+### ✒ 마커를 눌렀을 때 즐겨찾기 하기
+- `result.pug`  script 참고
+- 마커를 눌렸을 때 정보창이 뜨도록 `result.pug` 수정
+- `new google.maps.InfoWindow(옵션)` : 정보창을 띄우는 코드
+<pre>
+var infowindow = <b>new google.maps.InfoWindow</b>({
+    content: div, // content: 내용물을 넣어준다.
+});
+</pre>
+- `router/index.js`에 라우터 추가
+- 장소를 넣을 때 경도, 위도 순으로 넣어야 한다.
+- Google Maps API를 사용할 때와 순서가 반대이다.
+<pre>
+router.post('/location/:id/favorite', async (req, res, next) => {
+  try {
+    const favorite = await Favorite.create({
+      placeId: req.params.id,
+      name: req.body.name,
+      // 경도 위도 순으로
+      location: [req.body.lng, req.body.lat],
+    });
+    res.send(favorite);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+</pre>
+
+![favorite](./img/8.PNG)
