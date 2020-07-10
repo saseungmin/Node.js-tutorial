@@ -2,6 +2,9 @@
 ### 📌 참고 문서 
 > - Google Maps Platform : https://cloud.google.com/maps-platform/
 > - Google Maps Platform 시작하기 : https://developers.google.com/maps/gmp-get-started
+> - @google/maps 공식 문서 npm : https://www.npmjs.com/package/@googlemaps/google-maps-services-js
+> - geolocation MDN : https://developer.mozilla.org/ko/docs/WebAPI/Using_geolocation
+
 ## 🌈 기본 설정
 - *package.json* 패키지 설치
 <pre>
@@ -210,5 +213,13 @@ router.post('/location/:id/favorite', async (req, res, next) => {
   }
 });
 </pre>
+- 즐겨찾기 추가
 
 ![favorite](./img/8.PNG)
+
+- 메인 화면에 즐겨찾기된 장소들 보이기 (`views/index.pug, routes/index.js => '/'`);
+
+#### 📌 추가 작업
+- 즐겨찾기 삭제하기 (라우터 생성 및 프런트 화면에 삭제 버튼 추가)
+- 검색 내역 표시하기
+- 다른 @google/maps API 사용하기(Directions API, Distance Matrix API ..)
