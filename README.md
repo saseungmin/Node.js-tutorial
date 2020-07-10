@@ -43,5 +43,5 @@
 - Google Maps API
 - 위치 기반 / 즐겨찾기
 
-### ✒ [12.CLI 프로그램 만들기]
+### ✒ [12.CLI 프로그램 만들기](https://github.com/saseungmin/Node.js-tutorial/tree/master/node-cli)
 - 간단한 콘솔 명령어
