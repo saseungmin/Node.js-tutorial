@@ -42,3 +42,6 @@
 - Google Places API (https://cloud.google.com/maps-platform/)
 - Google Maps API
 - 위치 기반 / 즐겨찾기
+
+### ✒ [12.CLI 프로그램 만들기]
+- 간단한 콘솔 명령어
