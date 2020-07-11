@@ -45,3 +45,4 @@
 
 ### ✒ [12.CLI 프로그램 만들기](https://github.com/saseungmin/Node.js-tutorial/tree/master/node-cli)
 - 간단한 콘솔 명령어
+- Commander, Inquirer, Chalk 사용하기
