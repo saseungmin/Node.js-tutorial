@@ -9,6 +9,11 @@
   "author": "SeungMin",
   "license": "ISC",
   "bin": {
-    "cli": "./index.js"
+    "cli": "./command.js"
+  },
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "commander": "^5.1.0",
+    "inquirer": "^7.3.1"
   }
 }
