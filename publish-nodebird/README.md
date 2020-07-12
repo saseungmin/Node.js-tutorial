@@ -68,7 +68,7 @@ SEQUELIZE_PASSWORD:[데이터베이스 비밀번호]
 ### 🔸 cross-env
 - `croos-env`를 사용하면 동적으로 `process.env`를 변경할 수 있다.
 - 또한, 모든 운영체제에서 동일한 방법으로 변경할 수 있게 된다.
-#### 📌 Linux, MacOS
+#### ✌ Linux, MacOS
 <pre>
 // package.json
   "scripts": {
@@ -79,7 +79,7 @@ SEQUELIZE_PASSWORD:[데이터베이스 비밀번호]
   },
 </pre>
 
-#### 📌 window OS
+#### ✌ window OS
 - 위와 같은 방법이 window에서는 안되기 때문에 cross-env를 사용한다.
 <pre>
 // console
@@ -100,7 +100,7 @@ $ retire
 // 문제가 있는 패키지가 있다면 콘솔에 내용이 출력된다.
 </pre>
 
-#### 📌 npm audit
+#### ✌ npm audit
 - npm 5.10부터 npm audit이라는 명령어가 추가되었다.
 - npm install을 할 때 자동으로 취약점을 검사하고 npm audit fix를 입력하면 npm이 수정할 수 있는 오류는 자동으로 수정해준다.
 - 때문에, npm 5.10 이상이면 retire 패키리를 사용하지 않아도 된다.
@@ -153,3 +153,118 @@ $ pm2 kill && npm start
 $ pm2 monit
 </pre>
 ![monit](./img/3.PNG)
+
+### 🔸 winston
+- 실제 서버 운영 시 `console.log`와 `console.error`를 대체하기 위한 모듈이다.
+- `console.log`와 `console.error`를 사용하면 개발 중에는 편리하게 서버의 상황을 파악할 수 있지만, 실제 배포 시에는 사용하기 어렵다.
+- 서버가 종료되는 순간 로그들도 사라져 버리기 때문이다.
+- 이와 같은 상황을 방지하려면 로그를 파일이나 다른 데이터베이스에 저장해야 한다.
+<pre>
+$ npm i winston
+</pre>
+#### ✌ logger.js 파일 작성
+- `level`
+  - 로그의 심각도를 의미한다.
+  - error, warn, info, verbose, debug, silly가 있다.
+  - error 부터 심각도순으로 info를 고른 경우, info 보다 심각한 단계의 로그(error, warn)도 함꼐 기록된다.
+- `format`
+  - 로그의 형식을 의미한다.
+  - json, label, timestamp, printf, simple, combine 등이 있다.
+  - 기본적으로 JSON 형식으로 기록하지만 로그 기록 시간을 표시하려면 timestamp를 쓰는 것이 좋다.
+  - combine은 여러 형식을 혼합해서 사용할 때 쓴다.
+- `transports`
+  - 로그 저장 방식을 의미한다.
+  - `new transports.File`은 파일로 저장한다는 뜻이고, `new transports.Console`은 콘솔에 출력한다는 뜻이다.
+  - 여러 로깅 방식을 동시에 사용 가능하다.
+<pre>
+const { createLogger, format, transports } = require('winston');
+// winston 패키지의 createLogger 메서드로 logger 생성
+const logger = createLogger({
+  level: 'info',
+  format: format.json(),
+  transports: [
+    new transports.File({ filename: 'combined.log' }),
+    new transports.File({ filename: 'error.log', level: 'error' }),
+  ],
+});
+</pre>
+📌 추가로 `winston-daily-rotate-file` 패키지는 로그를 날짜별로 관리할 수 있게 해주는 패키지라 알아두면 좋다.
+
+### 🔸 helmet, hpp
+- 서버의 각종 취약점을 보완해주는 패키지들이다.
+- 익스프레스 미들웨어로서 사용할 수 있다.
+- 하지만 이 패키지를 사용한다고 모든 취약점을 방어해주는 것은 아니다. (주기적인 취약점 검사 필요)
+<pre>
+$ npm i helmet hpp
+</pre>
+- 개발 환경에서는 사용할 필요가 없다.
+<pre>
+if (process.env.NODE_ENV === 'production') {
+  // 서버의 취약점 보완 패키지
+  app.use(helmet());
+  app.use(hpp());
+}
+</pre>
+
+### 🔸 connect-redis
+- 멀티 프로세스 간 세션 공유를 위해 레디스와 익스프레스를 연결해주는 패키지이다.
+- 서버가 종료되어 메모리가 날아가면 접속자들이 로그인이 모두 풀려버리게 된다.
+- 이를 방지하기 위해서 세션 아이디와 실제 사용자 정보를 데이터베이스에 저장한다. (이때 사용하는 데이터베이스가 레디스)
+- 레디스를 사용할려면 `connect-redis` 패키지뿐만 아니라 레디스 데이터베이스를 설치해야 한다.
+<pre>
+$ npm i connect-redis
+</pre>
+- 서버에도 설치할 수 있지만 레디스를 호스팅해주는 서비스 [*redislabs*](https://redislabs.com/)가 있다.
+- 회원가입 후 레디스 호스팅 생성
+- Endpoint와 Redis Password를 복사해 `.env`에 붙여 넣는다.
+- 이때 Endpoint에서 Host와 Port를 분리한다.
+<pre>
+... .env
+REDIS_HOST=[redis host]
+REDIS_PORT=[redis port]
+REDIS_PASSWORD=[redis password]
+</pre>
+- `connect-redis` 패키지로 부터 `RedisStore` 객체를 `require`하고, 이때 `session`을 인자로 넣어서 호출한다.
+- `express-session` 미들웨어에 `store` 옵션을 추가한다.
+- 기본적으로는 메모리에 세션을 저장하지만, 이땐 RedisStore에 저장한다.
+- 따라서 로그인 후 서버를 껐다 켜도 로그인이 유지된다.
+<pre>
+const RedisStore = require('connect-redis')(session);
+const sessionOption = {
+  ...
+  store: new RedisStore({
+    host: process.env.REDIS_HOST,
+    port: process.env.REDIS_PORT,
+    pass: process.env.REDIS_PASSWORD,
+    logErrors: true, // 에러가 났을때 콘솔에 표시하질지를 결정하는 옵션
+  }),
+};
+</pre>
+
+### 🔸 nvm, n
+- 노드 버전을 업데이트하기 위한 패키지이다.
+- 윈도우에서는 `nvm-installer`를 사용하고, 리눅스나 맥에서는 `n` 패키지를 사용한다.
+#### ✌ 윈도우
+- https://github.com/coreybutler/nvm-windows/releases 에 접속하여 nvm-setup.zip을 내려받는다.
+- 압축 해제후 실행
+<pre>
+// 설치된 노드버전 확인
+$ nvm list
+// 새로운 버전을 설치
+$ nvm install [버전]
+// 최신 버전 설치
+$ nvm install lastest
+// 설치된 버전을 사용
+$ nvm use [버전명]
+</pre>
+#### ✌ 맥, 리눅스
+- 맥과 리눅스에서는 n 패키지를 사용한다.
+<pre>
+$ sudo npm i -g n
+// 현재 설치된 노드 버전 확인
+$ n
+// 새 버전을 설치
+$ n [버전]
+// 최신 버전 설치
+$ n lastest
+</pre>

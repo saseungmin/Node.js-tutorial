@@ -6,6 +6,11 @@ const session = require('express-session');
 const flash = require('connect-flash');
 // passport 모듈 연결
 const passport = require('passport');
+// 서버의 각종 취약점을 보완해주는 패키지
+const helmet = require('helmet');
+const hpp = require('hpp');
+// connect-redis 패키지로 부터 RedisStore 객체를 require하고, 이때 session을 인자로 넣어서 호출한다.
+const RedisStore = require('connect-redis')(session);
 require('dotenv').config();
 
 const pageRouter = require('./routes/page');
@@ -17,6 +22,8 @@ const userRouter = require('./routes/user');
 const { sequelize } = require('./models');
 // passpoart 모듈 연결
 const passportConfig = require('./passport');
+// winston logger 파일 서버와 연결
+const logger = require('./logger');
 
 const app = express();
 sequelize.sync();
@@ -29,9 +36,12 @@ app.set('port', process.env.PORT || 8010);
 // morgan 요청에 대한 정보를 콘솔에 기록해준다.
 // combined은 배포용 dev는 개발용
 //process.env.NODE_ENV는 배포 환경인지 개발 환경인지 판단할 수 있는 환경 변수
-if(process.env.NODE_ENV === 'production'){
+if (process.env.NODE_ENV === 'production') {
   app.use(morgan('combined'));
-}else{
+  // 서버의 취약점 보완 패키지
+  app.use(helmet());
+  app.use(hpp());
+} else {
   app.use(morgan('dev'));
 }
 app.use(express.static(path.join(__dirname, 'public')));
@@ -44,16 +54,23 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
 const sessionOption = {
-    resave: false,
-    saveUninitialized: false,
-    secret: process.env.COOKIE_SECRET,
-    cookie: {
-      httpOnly: true,
-      secure: false,
-    },
-}
+  resave: false,
+  saveUninitialized: false,
+  secret: process.env.COOKIE_SECRET,
+  cookie: {
+    httpOnly: true,
+    secure: false,
+  },
+  // express-session 미들웨어에 store 옵션을 추가한다
+  store: new RedisStore({
+    host: process.env.REDIS_HOST,
+    port: process.env.REDIS_PORT,
+    pass: process.env.REDIS_PASSWORD,
+    logErrors: true,
+  }),
+};
 // express-session 배포용으로 설정
-if(process.env.NODE_ENV === 'production'){
+if (process.env.NODE_ENV === 'production') {
   sessionOption.proxy = true;
   //sessionOption.cookie.secure = true;
 }
@@ -74,6 +91,9 @@ app.use('/user', userRouter);
 app.use((req, res, next) => {
   const err = new Error('Not Found');
   err.status = 404;
+  // winston 로그 남기기
+  logger.info('hello');
+  logger.error(err.message);
   next(err);
 });
 
