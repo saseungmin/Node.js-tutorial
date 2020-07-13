@@ -50,3 +50,4 @@
 ### ✒ [13.AWS와 GCP로 배포하기](https://github.com/saseungmin/Node.js-tutorial/tree/master/publish-nodebird)
 - 서비스 운영을 위한 패키지 설정
     - morgan, express-session, sequeilize, cross-env, retire, pm2, winston, helmet, hpp, connect-redis, nvm, n
+- AWS에 배포하기

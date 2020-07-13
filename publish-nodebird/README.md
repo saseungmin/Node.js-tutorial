@@ -286,7 +286,28 @@ $ n lastest
 - AWS도 가입 후 1년간 EC2 무료 티어를 제공한다.
 
 ## 🌈 AWS에 배포하기
-- 인스턴스 화면에서 **SSH를 사용하여 연결** 버튼 클릭
-- 브라우저 새 창에서 Lightsail용 콘솔이 실행
+1. 인스턴스 화면에서 **SSH를 사용하여 연결** 버튼 클릭
+2. 브라우저 새 창에서 Lightsail용 콘솔이 실행
 
 ![Lightsail](./img/4.PNG)
+3. MySQL 설치
+<pre>
+$ sudo apt-get update
+$ sudo apt-get install -y mysql-server-5.7
+$ sudo mysql_secure_installation
+$ mysql -h localhost -u root -p
+</pre>
+4. `$ git clone [레포지토리 주소]`
+5. Lightsail에서는 기본적으로 apache 서버가 켜져있기때문에 종료해준다.
+<pre>
+$ cd /opt/bitnami
+$ sudo ./ctlscript.sh stop apache
+</pre>
+6. 클론 받은 폴더로 이동하여 npm 패키지들을 생성하고 시퀄라이즈로 MySQL 데이터베이스 생성 후 서버를 실행한다.
+<pre>
+$ cd ~/폴더
+$ npm i
+$ sudo npm i -g pm2 cross-env sequelize-cli
+$ sequelize db:create --env production
+$ sudo npm start
+</pre>
