@@ -2,10 +2,10 @@
   "name": "nodebird",
   "version": "0.0.1",
   "description": "익스프레스로 만드는 SNS 서비스",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=production PORT=80 pm2 start app.js -i 0",
-    "dev": "nodemon app"
+    "start": "cross-env NODE_ENV=production PORT=80 pm2 start server.js -i 0",
+    "dev": "nodemon server"
   },
   "author": "seungmin",
   "license": "MIT",
@@ -29,6 +29,7 @@
     "passport-local": "^1.0.0",
     "pm2": "^4.4.0",
     "pug": "^3.0.0",
+    "redis": "^3.0.2",
     "sequelize": "^5.21.13",
     "winston": "^3.3.3"
   },

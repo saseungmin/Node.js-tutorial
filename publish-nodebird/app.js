@@ -10,8 +10,14 @@ const passport = require('passport');
 const helmet = require('helmet');
 const hpp = require('hpp');
 // connect-redis 패키지로 부터 RedisStore 객체를 require하고, 이때 session을 인자로 넣어서 호출한다.
+const redis = require('redis');
 const RedisStore = require('connect-redis')(session);
 require('dotenv').config();
+
+const redisClient = redis.createClient({
+  url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
+  password: process.env.REDIS_PASSWORD,
+});
 
 const pageRouter = require('./routes/page');
 const authRouter = require('./routes/auth');
@@ -26,12 +32,19 @@ const passportConfig = require('./passport');
 const logger = require('./logger');
 
 const app = express();
-sequelize.sync();
+sequelize
+  .sync({ force: false })
+  .then(() => {
+    console.log('데이터베이스 연결 성공');
+  })
+  .catch((err) => {
+    console.error(err);
+  });
 passportConfig(passport);
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
-app.set('port', process.env.PORT || 8010);
+app.set('port', process.env.PORT || 8011);
 
 // morgan 요청에 대한 정보를 콘솔에 기록해준다.
 // combined은 배포용 dev는 개발용
@@ -62,12 +75,7 @@ const sessionOption = {
     secure: false,
   },
   // express-session 미들웨어에 store 옵션을 추가한다
-  store: new RedisStore({
-    host: process.env.REDIS_HOST,
-    port: process.env.REDIS_PORT,
-    pass: process.env.REDIS_PASSWORD,
-    logErrors: true,
-  }),
+  store: new RedisStore({client:redisClient}),
 };
 // express-session 배포용으로 설정
 if (process.env.NODE_ENV === 'production') {
@@ -89,7 +97,7 @@ app.use('/user', userRouter);
 
 // 404 미들웨어
 app.use((req, res, next) => {
-  const err = new Error('Not Found');
+  const err = new Error(`${req.method} ${req.url} 라우터가 없습니다.`);
   err.status = 404;
   // winston 로그 남기기
   logger.info('hello');
@@ -108,7 +116,4 @@ app.use(function (err, req, res, next) {
   res.render('error');
 });
 
-// 8002에 연결
-app.listen(app.get('port'), () => {
-  console.log(app.get('port'), '번 포트에서 대기 중');
-});
+module.exports = app;

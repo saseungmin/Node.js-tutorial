@@ -311,3 +311,45 @@ $ sudo npm i -g pm2 cross-env sequelize-cli
 $ sequelize db:create --env production
 $ sudo npm start
 </pre>
+
+## 🌈 GCP(Google Cloud Platform) 시작하기
+1. 프로젝트 선택 화면에서 만들기 클릭
+2. 새 프로젝트 이름 설정후 만들기 버튼 클릭
+3. 해당 프로젝트를 클릭 후 좌측 메뉴에서 Compute Engine 선택
+4. 무료 평가판에 가입 후 VM 인스턴스 화면에서 만들기 버튼 클릭
+5. 인스턴스 만들기 페이지에서 리전은 us-east1, us-central1, us-west1만 무료이므로 셋중에 하나를 고른다.
+6. 운영체제는 Ubuntu 16.04LTS로 설정 후 방화벽은 HTTP와 HTTPS 트래픽을 둘 다 허용한다.
+7. 인스턴스 준비 뒤 외부 IP 옆 연결 SHH를 클릭하면 해당 인스턴스의 콘솔로 접근 가능하다.
+
+![gcp](./img/5.PNG)
+
+## 🌈 GCP(Google Cloud Platform) 배포하기
+1. 우분투에 노드와 MySQL을 설치한다.
+<pre>
+// 노드 설치
+$ sudo apt-get update
+$ sudo apt-get install -y build-essential
+$ sudo apt-get install curl
+$ curl -sL https://deb.nodesource.com/setup_10.x|sudo -E bash --
+$ sudo apt-get install -y nodejs
+// 노드 설치 확인
+$ node -v
+$ npm -v
+// MySQL 설치
+$ sudo apt-get update
+$ sudo apt-get install -y mysql-server-5.7
+$ sudo mysql_secure_installation
+$ mysql -h localhost -u root -p
+</pre>
+2. Github에서 소스 내려 받기
+<pre>
+$ git clone [레포지토리 주소]
+</pre>
+3. 해당 폴더로 이동해 npm 패키지 설치후 서버 실행
+<pre>
+$ cd ~/폴더
+$ npm i
+$ sudo npm i -g pm2 cross-env sequelize-cli
+$ sequelize db:create --env production
+$ sudo npm start
+</pre>
