@@ -51,3 +51,4 @@
 - 서비스 운영을 위한 패키지 설정
     - morgan, express-session, sequeilize, cross-env, retire, pm2, winston, helmet, hpp, connect-redis, nvm, n
 - AWS에 배포하기
+- Google Cloud Platform 에 배포하기

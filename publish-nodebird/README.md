@@ -1,4 +1,24 @@
 # ✔️ AWS와 GCP로 배포하기
+### 📌 참고 문서
+- cross-env : https://www.npmjs.com/package/cross-env
+- Retire : https://www.npmjs.com/package/retire
+- npm audit : https://docs.npmjs.com/cli/audit
+- PM2
+  - https://www.npmjs.com/package/pm2
+  - https://pm2.keymetrics.io/
+- Winston : https://www.npmjs.com/package/winston
+- Helmet : https://www.npmjs.com/package/helmet
+- Hpp : https://www.npmjs.com/package/hpp
+- Redis : https://redis.io/documentation
+- connect-redis : https://www.npmjs.com/package/connect-redis
+- rate-limit-redis : https://www.npmjs.com/package/rate-limit-redis
+- N : https://www.npmjs.com/package/n
+- NVM : https://github.com/coreybutler/nvm-windows/releases
+- Git 설명 : https://git-scm.com/doc
+- GCP : https://cloud.google.com/?hl=ko
+- AWS : https://aws.amazon.com/ko/
+<hr>
+
 - nodebird 배포하기
 ## 🌈 서비스 운영을 위한 패키지
 - 서비스를 출시한 이후에 서버에 문제가 생기면 서비스 자체에 문제가 된다.
