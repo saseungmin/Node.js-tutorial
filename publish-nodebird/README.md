@@ -350,7 +350,7 @@ $ sudo npm start
 $ sudo apt-get update
 $ sudo apt-get install -y build-essential
 $ sudo apt-get install curl
-$ curl -sL https://deb.nodesource.com/setup_10.x|sudo -E bash --
+$ curl -sL https://deb.nodesource.com/setup_12.x|sudo -E bash --
 $ sudo apt-get install -y nodejs
 // 노드 설치 확인
 $ node -v
