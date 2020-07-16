@@ -44,7 +44,7 @@ passportConfig(passport);
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
-app.set('port', process.env.PORT || 8011);
+app.set('port', process.env.PORT || 8002);
 
 // morgan 요청에 대한 정보를 콘솔에 기록해준다.
 // combined은 배포용 dev는 개발용
