@@ -373,3 +373,16 @@ $ sudo npm i -g pm2 cross-env sequelize-cli
 $ sequelize db:create --env production
 $ sudo npm start
 </pre>
+
+
+### 📌 배포시 주의 사항!
+#### ✌ .env 파일
+- 배포용 서버에서 따로 .env 파일을 생성하여 비밀키를 적어준다.
+
+#### ✌ 웹 서버와 DB 서버의 분리
+- 웹 서버와 DB 서버의 분리가 필요하다.
+- 지금은 웹 서버와 DB 서버를 같은 VM 인스턴스에서 실행하고 있지만, 나중에는 분리하는 것이 좋다.
+- 서버 하나에 문제가 생겼을 때 다른 서버에 영향을 미치기 때문이다.
+- AWS는 RDS라는 MySQL 전용 서비스를 따로 운영하고 있다.
+- GCP는 Cloud SQL 이라는 MySQL 전용 서비스를 따로 운영하고 있다.
+- 도메인을 사용할려면 도메인을 구입한 후 GCP의 Cloud DNC 서비스에서 연결하면 된다.
