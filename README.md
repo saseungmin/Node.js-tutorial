@@ -54,3 +54,4 @@
 - Google Cloud Platform 에 배포하기
 
 ### ✒ [14.서버리스 노드 개발](https://github.com/saseungmin/Node.js-tutorial/tree/master/server-less-nodebird)
+- AWS S3 사용하여 이미지 업로드/이미지 불러오기
