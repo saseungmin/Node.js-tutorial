@@ -89,5 +89,16 @@ router.post('/img', isLoggedIn, upload.single('img'), (req, res) => {
 ![s3](./img/1.PNG)
 
 #### 📌 S3를 사용하면 데이터를 저장할 때와 저장된 데이터를 로드할 때 과금이 된다.
-- 가입 후 1년간 저장 용량 5GB, 데이터 로드 2만 건, 데이터 옵로드 2천 건까지는 무료이다.
+- 가입 후 1년간 저장 용량 5GB, 데이터 로드 2만 건, 데이터 업로드 2천 건까지는 무료이다.
 - 1년이 지나면 과금이되므로 주의 ❗❗
+
+## ✌ AWS Lambda 사용하기
+- S3에 올린 이미지를 리사이징한 후 줄어든 이미지를 다시 S3에 저장한다.
+- 사용자가 사이즈가 너무 큰 이미지를 올렸을 경우, 적절한 크기와 용량으로 이미지를 변경하는 것이다.
+- 이미지 리사이징은 CPU를 많이 사용하는 작업이여서 Lambda로 분리한다.
+1. aws-upload 파일을 따로 생성해준다. (https://github.com/saseungmin/Node.js-tutorial/tree/master/aws-upload)
+<pre>
+$ npm init
+$ npm i aws-sdk gm
+</pre>
+2. Lambda가 실행할 `index.js` 작성

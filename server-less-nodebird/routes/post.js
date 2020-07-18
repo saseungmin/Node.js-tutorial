@@ -21,8 +21,7 @@ AWS.config.update({
   accessKeyId: process.env.S3_ACCESS_KEY_ID,
   secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
   region: 'ap-northeast-2',
-})
-
+});
 
 // 파일 업로드
 // 미들웨어를 만드는 객체가 된다.
@@ -31,10 +30,10 @@ const upload = multer({
   storage: multerS3({
     s3: new AWS.S3(),
     bucket: 'seungminnode',
-    key(req, file, cb){
+    key(req, file, cb) {
       // original 폴더 아래에 생성
       cb(null, `original/${Date.now()}${path.basename(file.originalname)}`);
-    }
+    },
   }),
   // 최대 이미지 파일 용량 허용치(바이트 단위) 10MB
   limits: { fileSize: 5 * 1024 * 1024 },
