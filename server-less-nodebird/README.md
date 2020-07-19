@@ -135,3 +135,58 @@ const gm = require('gm').subClass({ imageMagick: true });
     - **버킷에 파일이 생성되면 함수가 호출된다.**
     - 단, original 폴더 안에 파일만 함수를 트리거하더록 접두사에 `original/`을 적어준다.
     - 설정이 끝나면 추가 버튼을 클릭 후 저장 버튼 클릭한다.
+
+11. Lambda 서비스를 이용할 수 있게 코드 수정한다.
+<pre>
+  // req.file.location에 S3 버킷 이미지 주소가 담겨있다. 이 주소를 클라이언트로 보낸다.
+  // 기본 주소에서 original 폴더 부분을 thumb 폴더로 교체
+  const originalUrl = req.file.location;
+  const url = originalUrl.replace(/\/original\//, '/thumb/');
+  res.json({ url, originalUrl });
+</pre>
+12. 이미지 미리보기 시에는 원본 이미지를 보여주고, 이미지 저장 후에는 리사이징된 이미지를 보여준다.
+    - 이미지 업로드와 이미지 리사이징 간의 시간차가 있으므로 이미지가 보이지 않을 수도 있는데, 그 문제를 해결하기 위한 방법이다.
+<pre>
+var url = JSON.parse(xhr.responseText).url;
+var originalUrl = JSON.parse(xhr.responseText).originalUrl;
+document.getElementById('img-url').value = url;
+document.getElementById('img-preview').src = originalUrl;
+</pre>
+- 이미지가 S3에 업로드된 후 Lambda 트리거에 따라 Lambda 함수가 실행된다. 따라서 이미지 리사이징도 자동으로 이루어진다.
+
+
+## ✌ Google Cloud Storage 사용하기
+- Google Cloud Storage에 이미지를 업로드한다.
+- GCP 웹 사이트에서 미리 Cloud Storage 관련 설정을 해두어야 한다.
+1. GCP 콘솔 - 저장소 - storage - 브라우저 - 버킷만들기 클릭
+2. 버킷 이름 설정 - 데이터 저장 위치 선택(Region/ us-east1) - 데이터 기본 스토리지 선택(standard) - 만들기
+3. 생성된 버킷에서 권한을 선택한다. - 구성원 추가 클릭 - 새 구성원에 `allUsers` 입력 - 역할에 cloud Storage에 저장소 개체 뷰어 선택 후 저장
+4. 버킷 권한 수정 후 API 및 서비스 페이지 - 사용자 인증 정보 - 사용자 인증 정보 만들기 - 서비스 계정 클릭
+5. 생성 혹은 기존에 있던 서비스 계정에서 키 - 키 추가 클릭 - 새 키 만들기 - JSON 형식 - 생성
+    - 여기서 생성된 JSON 키 파일이 다운로드된다.
+    - 이 키 파일을 프로젝트 폴더에 복사한다.
+6. 콘솔에 `multer`에서 `Cloud Storage`로 업로드할 수 있게 해주는 `multer-google-storage` 패키지를 설치한다.
+    - Cloud Storage를 사용하면 데이터를 저장할 때와 저장된 데이터를 로드할 때 과금되기 때문에 주의 (1년 무료가 지나거나 혹은 300달러 소진시)
+<pre>
+$ npm i multer-google-storage axios
+</pre>
+7. `multer-google-storage`를 사용하도록 라우터 post 수정
+    - bucket과 projectId, keyFilename등은 자신의 홈 메뉴의 프로젝트 정보 섹션에서 확인해서 적는다.
+    - `env`에 따로 추가해준다.
+<pre>
+MULTER_GOOGLE_STORAGE_BUCKET=[bucket]
+MULTER_GOOGLE_STORAGE_PROJECTID=[projectId]
+MULTER_GOOGLE_STORAGE_KEYFILENAME=[keyFilename]
+</pre>
+<pre>
+const multerGoogleStorage = require('multer-google-storage');
+
+const upload = multer({
+  storage: multerGoogleStorage.storageEngine({
+    bucket: process.env.MULTER_GOOGLE_STORAGE_BUCKET,
+    projectId: process.env.MULTER_GOOGLE_STORAGE_PROJECTID,
+    keyFilename: process.env.MULTER_GOOGLE_STORAGE_KEYFILENAME,
+  }),
+  limits: { fileSize: 5 * 1024 * 1024 },
+});
+</pre>

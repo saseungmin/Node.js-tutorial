@@ -10,8 +10,8 @@ const s3 = new AWS.S3();
 // callback은 함수가 완료되었는지를 람다에게 알려준다.
 exports.handler = (event, context, callback) => {
   // event 객체로부터 버킷 이름(Bucket)과 파일 경로(Key)를 받아온다.
-  const Bucket = event.Record[0].s3.bucket.name;
-  const Key = event.Record[0].s3.object.key;
+  const Bucket = event.Records[0].s3.bucket.name;
+  const Key = event.Records[0].s3.object.key;
   // 파일 경로(Key)를 통해서 파일명(filename)과 확장자(ext)도 얻을 수 있다.
   const filename = Key.split('/')[Key.split('/').length - 1];
   const ext = Key.split('.')[Key.split('.').length - 1];

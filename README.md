@@ -56,3 +56,4 @@
 ### ✒ [14.서버리스 노드 개발](https://github.com/saseungmin/Node.js-tutorial/tree/master/server-less-nodebird)
 - AWS S3 사용하여 이미지 업로드/이미지 불러오기
 - [AWS Lambda](https://github.com/saseungmin/Node.js-tutorial/tree/master/aws-upload)를 사용하여 이미지 리사이징하여 S3에 다시 저장하기
+- Google Cloud Storage 사용하여 이미지 업로드 하기

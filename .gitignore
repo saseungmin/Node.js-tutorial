@@ -143,5 +143,8 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+# 사진 업로드 폴더 
 uploads
+# GCP 사용자 계정 키
+node-deploy-283312-9caaabe05f9d.json
 # End of https://www.toptal.com/developers/gitignore/api/macos
