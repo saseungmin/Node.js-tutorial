@@ -101,4 +101,37 @@ router.post('/img', isLoggedIn, upload.single('img'), (req, res) => {
 $ npm init
 $ npm i aws-sdk gm
 </pre>
-2. Lambda가 실행할 `index.js` 작성
+2. Lambda가 실행할 [`index.js`](https://github.com/saseungmin/Node.js-tutorial/blob/master/aws-upload/index.js) 작성 (주석참고 ❗)
+    - gm 패키지는 이미지 조작을 위한 패키지로 `imageMagick` 방식으로 이미지를 리사이징하기 위해 `subClass` 메서드로 설정해준다.
+    - gm 패키지의 `resize` 메서드로 크기를 지정하는 데 가로나 세로중 하나가 200px이 될 때까지 이미지를 줄이거나 늘리라는 뜻이다.
+    - `*`외에도 기본 옵션이나 `!,>,<,%`와 같은 옵션이 존재한다.
+    - 다른 옵션에 대한 설명(https://imagemagick.org/Usage/resize/#resize)
+<pre>
+// ImageMagick : 이미지 파일을 생성,수정 등의 작업하기 위한 오픈소스 소프트웨어
+const gm = require('gm').subClass({ imageMagick: true });
+...
+    return gm(data.Body)
+  .resize(200, 200, '^')
+  .quality(90)
+  .toBuffer(ext, (err, buffer) => {
+    ...
+  });
+</pre>
+
+3. aws-upload 폴더 아래의 모든 파일을 압축하여 aws-upload.zip 파일로 만든다.
+    - 조심해야할 점은 파일을 압축할 때 압축 파일 안에 바로 코드가 들어가야 한다.
+4. Lambda 서비스 설정한다. (서비스-컴퓨팅-Lambda 클릭)
+5. 함수에 함수 생성 클릭
+6. 함수 생성 페이지에서 `새로작성`을 선택하여 기본정보를 작성한다.
+    - 함수 이름을 작성하고 런타임은 `Node.js 12.x` 선택한다.
+    - `실행 역할을 선택하거나 생성하여`를 클릭하여 `AWS 정책 템플릿에서 새 역할 생성`을 선택한다.
+    - `역할 이름`을 입력하고 `정책 템플릿`에서 `Amazon S3 객체 읽기 전용 권한`을 선택한다. (그래야 S3에 업로드된 이미지를 가져올 수 있다.)
+7. 함수 생성 버튼 클릭
+8. 생성된 Lambda 페이지에서 `함수 코드` 섹션에서 `작업 버튼` 클릭후 aws-upload.zip 파일을 업로드한다.
+9. 기본 설정에 핸들러는 반드시 실행할 **파일명.함수명**이어야 한다(`index.handler`)로 설정한다.
+10. 트리거 추가 클릭
+    - 르리거에 S3 선택
+    - 자신의 버킷 버킷 선택 후 이베트 유형을 모든 객체 생성 이벤트 선택
+    - **버킷에 파일이 생성되면 함수가 호출된다.**
+    - 단, original 폴더 안에 파일만 함수를 트리거하더록 접두사에 `original/`을 적어준다.
+    - 설정이 끝나면 추가 버튼을 클릭 후 저장 버튼 클릭한다.
