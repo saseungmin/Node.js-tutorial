@@ -31,49 +31,40 @@ block content
           if twit.img
             .twit-img
               img(src=twit.img alt='섬네일')
+  script(src="https://unpkg.com/axios/dist/axios.min.js")
   script.
-    if (document.getElementById('img')) {
-      document.getElementById('img').addEventListener('change', function (e) {
-        var formData = new FormData();
-        console.log(this, this.files);
-        formData.append('img', this.files[0]);
-        var xhr = new XMLHttpRequest();
-        xhr.onload = function () {
-          if (xhr.status === 200) {
-            var url = JSON.parse(xhr.responseText).url;
-            var originalUrl = JSON.parse(xhr.responseText).originalUrl;
-            document.getElementById('img-url').value = url;
-            document.getElementById('img-preview').src = originalUrl;
-            document.getElementById('img-preview').style.display = 'inline';
-          } else {
-            console.error(xhr.responseText);
+      if (document.getElementById('img')) {
+            document.getElementById('img').addEventListener('change', function(e) {
+              const formData = new FormData();
+              console.log(this, this.files);
+              formData.append('img', this.files[0]);
+              axios.post('/post/img', formData)
+                .then((res) => {
+                  document.getElementById('img-url').value = res.data.url;
+                  document.getElementById('img-preview').src = res.data.url;
+                  document.getElementById('img-preview').style.display = 'inline';
+                })
+                .catch((err) => {
+                  console.error(err);
+                });
+            });
           }
-        };
-        xhr.open('POST', '/post/img');
-        xhr.send(formData);
-      });
-    }
-    document.querySelectorAll('.twit-follow').forEach(function (tag) {
-      tag.addEventListener('click', function () {
-        var isLoggedIn = document.querySelector('#my-id');
-        if (isLoggedIn) {
-          var userId = tag.parentNode.querySelector('.twit-user-id').value;
-          var myId = isLoggedIn.value;
-          if (userId !== myId) {
-            if (confirm('팔로잉하시겠습니까?')) {
-              var xhr = new XMLHttpRequest();
-              xhr.onload = function () {
-                if (xhr.status === 200) {
-                  location.reload();
-                  alert('팔로잉되셨습니다.');
-                } else {
-                  console.error(xhr.responseText);
+          document.querySelectorAll('.twit-follow').forEach(function(tag) {
+            tag.addEventListener('click', function() {
+              const myId = document.querySelector('#my-id');
+              if (myId) {
+                const userId = tag.parentNode.querySelector('.twit-user-id').value;
+                if (userId !== myId.value) {
+                  if (confirm('팔로잉하시겠습니까?')) {
+                    axios.post(`/user/${userId}/follow`)
+                      .then(() => {
+                        location.reload();
+                      })
+                      .catch((err) => {
+                        console.error(err);
+                      });
+                  }
                 }
-              };
-              xhr.open('POST', '/user/' + userId + '/follow');
-              xhr.send();
-            }
-          }
-        }
-      });
-    });
+              }
+            });
+          });

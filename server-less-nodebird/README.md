@@ -1,4 +1,12 @@
 # ✔ 서버리스 노드 개발
+### 📌 참고 문서
+> - S3 : https://docs.aws.amazon.com/ko_kr/AmazonS3/latest/dev/Welcome.html
+> - Lambda : https://docs.aws.amazon.com/ko_kr/lambda/latest/dg/welcome.html
+> - Cloud Storage : https://cloud.google.com/storage#section-4
+> - Cloud Functions : https://cloud.google.com/functions#documentation
+> - GM 공식 문서 : https://www.npmjs.com/package/gm
+> - sharp 공식 문서 : https://www.npmjs.com/package/
+
 ## ✌ 서버리스 이해하기
 - 서버를 클라우드 서비스가 대신 관리해줘서 개발자나 운영자가 서버를 관리하는 데 드는 부담이 줄어든다.
 - 즉, 개발자는 자신의 서비스 로직 작성에만 집중할 수 있게 된다.

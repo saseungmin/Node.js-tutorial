@@ -1,39 +1,26 @@
 const express = require('express');
 const multer = require('multer');
-const path = require('path');
+const multerGoogleStorage = require('multer-google-storage');
 const fs = require('fs');
-const AWS = require('aws-sdk');
-const multerS3 = require('multer-s3');
 
 const { Hashtag, Post, User } = require('../models');
 const { isLoggedIn } = require('./middlewares');
 
 const router = express.Router();
-// uploads 폴더가 없을 때 폴더 생성
-fs.readdir('uploads', (error) => {
-  if (error) {
-    console.error('uploads 폴더가 없어 폴더를 생성합니다.');
-    fs.mkdirSync('uploads');
-  }
-});
-// AWS에 관한 설정
-AWS.config.update({
-  accessKeyId: process.env.S3_ACCESS_KEY_ID,
-  secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
-  region: 'ap-northeast-2',
-});
+try {
+  fs.readdirSync('uploads');
+} catch (error) {
+  console.error('uploads 폴더가 없어 uploads 폴더를 생성합니다.');
+  fs.mkdirSync('uploads');
+}
 
 // 파일 업로드
 // 미들웨어를 만드는 객체가 된다.
 const upload = multer({
-  // multerS3 옵션으로 s3 객체, 버킷명, 파일명을 입력
-  storage: multerS3({
-    s3: new AWS.S3(),
-    bucket: 'seungminnode',
-    key(req, file, cb) {
-      // original 폴더 아래에 생성
-      cb(null, `original/${Date.now()}${path.basename(file.originalname)}`);
-    },
+  storage: multerGoogleStorage.storageEngine({
+    bucket: process.env.MULTER_GOOGLE_STORAGE_BUCKET,
+    projectId: process.env.MULTER_GOOGLE_STORAGE_PROJECTID,
+    keyFilename: process.env.MULTER_GOOGLE_STORAGE_KEYFILENAME,
   }),
   // 최대 이미지 파일 용량 허용치(바이트 단위) 10MB
   limits: { fileSize: 5 * 1024 * 1024 },
@@ -43,11 +30,7 @@ const upload = multer({
 // array, fields는 여러 개의 이미지를 업로드할 때 사용한다.
 router.post('/img', isLoggedIn, upload.single('img'), (req, res) => {
   console.log(req.file);
-  // req.file.location에 S3 버킷 이미지 주소가 담겨있다. 이 주소를 클라이언트로 보낸다.
-  // 기본 주소에서 original 폴더 부분을 thumb 폴더로 교체
-  const originalUrl = req.file.location;
-  const url = originalUrl.replace(/\/original\//, '/thumb/');
-  res.json({ url, originalUrl });
+  res.json({ url: req.file.path });
 });
 
 const upload2 = multer();

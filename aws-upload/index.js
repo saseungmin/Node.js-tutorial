@@ -16,6 +16,7 @@ exports.handler = (event, context, callback) => {
   const filename = Key.split('/')[Key.split('/').length - 1];
   const ext = Key.split('.')[Key.split('.').length - 1];
   // s3.getObject 메서드로 버킷으로부터 파일을 불러오고 data.Body에 파일 버퍼가 담겨 있다.
+  console.log('name', filename, 'ext', ext);
   s3.getObject({ Bucket, Key }, (err, data) => {
     if (err) {
       console.error(err);
@@ -34,6 +35,7 @@ exports.handler = (event, context, callback) => {
           return callback(err);
         }
         // 리사이징된 이미지를 thumb 폴더 아래에 저장한다.
+        console.log(buffer);
         return s3.putObject(
           {
             Bucket,
